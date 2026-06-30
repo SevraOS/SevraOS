@@ -1,0 +1,18 @@
+work/
+out/
+*.iso
+*.img
+*.pkg.tar.zst
+
+# Python / Environment
+__pycache__/
+*.pyc
+venv/
+.venv/
+env/
+*.db
+backend/data/
+
+# IDE
+.idea/
+.vscode/

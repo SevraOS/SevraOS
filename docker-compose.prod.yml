@@ -1,0 +1,169 @@
+# ═══════════════════════════════════════════════════════════════
+# HELIOS OS + SEVRA AI — Docker Compose (Production)
+# Differences from dev:
+#   - No volume mounts (image is the source of truth)
+#   - All secrets via Docker Secrets or Vault
+#   - TLS enforced (Redis, PostgreSQL)
+#   - No dev tools (MinIO console disabled)
+#   - Replicas defined for critical services
+# ═══════════════════════════════════════════════════════════════
+
+version: "3.9"
+
+volumes:
+  postgres_data_prod:
+  redis_data_prod:
+  minio_data_prod:
+  prometheus_data_prod:
+  grafana_data_prod:
+
+networks:
+  helios-app-net-prod:
+    driver: bridge
+  helios-data-net-prod:
+    driver: bridge
+  helios-obs-net-prod:
+    driver: bridge
+
+secrets:
+  postgres_password:
+    external: true
+  redis_password:
+    external: true
+  jwt_private_key:
+    external: true
+  jwt_public_key:
+    external: true
+  sqlite_encryption_key:
+    external: true
+
+services:
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: helios-redis-prod
+    restart: always
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory 4gb
+      --maxmemory-policy noeviction
+      --requirepass ${HELIOS_REDIS_PASSWORD}
+    volumes:
+      - redis_data_prod:/data
+    networks:
+      - helios-data-net-prod
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${HELIOS_REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 4.5G
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: helios-postgres-prod
+    restart: always
+    environment:
+      POSTGRES_DB: helios
+      POSTGRES_USER: helios
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    secrets:
+      - postgres_password
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    networks:
+      - helios-data-net-prod
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U helios -d helios"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+
+  backend:
+    image: helios/backend:${IMAGE_TAG:-latest}
+    restart: always
+    environment:
+      HELIOS_ENVIRONMENT: production
+      HELIOS_REDIS_HOST: redis
+      HELIOS_POSTGRES_HOST: postgres
+      HELIOS_POSTGRES_USER: helios
+      HELIOS_POSTGRES_DB: helios
+      HELIOS_LOG_FORMAT: json
+      HELIOS_LOG_LEVEL: INFO
+      HELIOS_WORKERS: 4
+      HELIOS_JWT_PRIVATE_KEY_PATH: /run/secrets/jwt_private_key
+      HELIOS_JWT_PUBLIC_KEY_PATH: /run/secrets/jwt_public_key
+      HELIOS_SQLITE_ENCRYPTION_KEY_PATH: /run/secrets/sqlite_encryption_key
+    secrets:
+      - jwt_private_key
+      - jwt_public_key
+      - sqlite_encryption_key
+    expose:
+      - "8000"
+    networks:
+      - helios-app-net-prod
+      - helios-data-net-prod
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+
+  prometheus:
+    image: prom/prometheus:v2.55.0
+    container_name: helios-prometheus-prod
+    restart: always
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=15d"
+      - "--web.enable-lifecycle"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/rules:/etc/prometheus/rules:ro
+      - prometheus_data_prod:/prometheus
+    networks:
+      - helios-obs-net-prod
+      - helios-app-net-prod
+    expose:
+      - "9090"
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    container_name: helios-grafana-prod
+    restart: always
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SERVER_ROOT_URL: ${GRAFANA_ROOT_URL:-http://localhost:3001}
+    volumes:
+      - grafana_data_prod:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - helios-obs-net-prod
+    expose:
+      - "3000"

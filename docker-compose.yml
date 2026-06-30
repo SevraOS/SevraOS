@@ -1,0 +1,226 @@
+# ═══════════════════════════════════════════════════════════════
+# HELIOS OS + SEVRA AI — Docker Compose (Development)
+# Full local stack: backend + Redis + PostgreSQL + MinIO + Monitoring
+# ═══════════════════════════════════════════════════════════════
+
+version: "3.9"
+
+# ── Named Volumes ─────────────────────────────────────────────────────────────
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  prometheus_data:
+  grafana_data:
+  loki_data:
+  backend_sqlite_data:   # Named volume for SQLite DB — avoids WSL2 :ro bind mount conflict
+
+# ── Networks (Zone Isolation) ──────────────────────────────────────────────────
+networks:
+  helios-pipeline-net:
+    driver: bridge
+  helios-app-net:
+    driver: bridge
+  helios-data-net:
+    driver: bridge
+  helios-obs-net:
+    driver: bridge
+
+# ── Services ──────────────────────────────────────────────────────────────────
+services:
+
+  # ── Infrastructure: Redis ──────────────────────────────────────────────────
+  redis:
+    image: redis:7.4-alpine
+    container_name: helios-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory 512mb
+      --maxmemory-policy noeviction
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - helios-data-net
+      - helios-pipeline-net
+      - helios-app-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # ── Infrastructure: PostgreSQL ─────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: helios-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: helios
+      POSTGRES_USER: helios
+      POSTGRES_PASSWORD: ${HELIOS_POSTGRES_PASSWORD:-helios_dev_password}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - helios-data-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U helios -d helios"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ── Infrastructure: MinIO (Object Storage) ─────────────────────────────────
+  minio:
+    image: minio/minio:latest
+    container_name: helios-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${HELIOS_MINIO_ROOT_USER:-helios}
+      MINIO_ROOT_PASSWORD: ${HELIOS_MINIO_ROOT_PASSWORD:-helios_dev_password}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - helios-data-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ── Backend: HELIOS API ────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: helios-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      HELIOS_ENVIRONMENT: development
+      HELIOS_REDIS_HOST: redis
+      HELIOS_REDIS_PORT: 6379
+      HELIOS_POSTGRES_HOST: postgres
+      HELIOS_POSTGRES_PORT: 5432
+      HELIOS_POSTGRES_DB: helios
+      HELIOS_POSTGRES_USER: helios
+      HELIOS_POSTGRES_PASSWORD: ${HELIOS_POSTGRES_PASSWORD:-helios_dev_password}
+      HELIOS_LOG_FORMAT: console
+      HELIOS_LOG_LEVEL: DEBUG
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app:ro
+      - backend_sqlite_data:/app/data   # Named volume — writable, avoids WSL2 EROFS conflict
+    networks:
+      - helios-app-net
+      - helios-data-net
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # ── Observability: Prometheus ──────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:v2.55.0
+    container_name: helios-prometheus
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=15d"
+      - "--web.enable-lifecycle"
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/rules:/etc/prometheus/rules:ro
+      - prometheus_data:/prometheus
+    networks:
+      - helios-obs-net
+      - helios-app-net
+    depends_on:
+      - backend
+
+  # ── Observability: Grafana ─────────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:11.3.0
+    container_name: helios-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-helios_grafana}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - helios-obs-net
+    depends_on:
+      - prometheus
+
+  # ── Observability: Loki ────────────────────────────────────────────────────
+  loki:
+    image: grafana/loki:3.2.0
+    container_name: helios-loki
+    restart: unless-stopped
+    command: -config.file=/etc/loki/loki-config.yml
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./monitoring/loki/loki-config.yml:/etc/loki/loki-config.yml:ro
+      - loki_data:/loki
+    networks:
+      - helios-obs-net
+
+  # ── Observability: Promtail ────────────────────────────────────────────────
+  promtail:
+    image: grafana/promtail:3.2.0
+    container_name: helios-promtail
+    restart: unless-stopped
+    command: -config.file=/etc/promtail/config.yml
+    volumes:
+      - ./monitoring/promtail/promtail-config.yml:/etc/promtail/config.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    networks:
+      - helios-obs-net
+    depends_on:
+      - loki
+
+  # ── Dev Tool: Adminer (Database Browser UI) ────────────────────────────────
+  adminer:
+    image: adminer:latest
+    container_name: helios-adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    networks:
+      - helios-data-net
+    depends_on:
+      - postgres
