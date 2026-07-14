@@ -1,0 +1,16 @@
+environment: testing
+debug: true
+log_level: DEBUG
+log_format: console
+workers: 1
+rate_limit_enabled: false
+redis_host: localhost
+redis_port: 6379
+redis_db: 1
+sqlite_path: ":memory:"
+postgres_host: localhost
+postgres_port: 5432
+postgres_db: helios_test
+postgres_pool_size: 2
+jwt_access_token_expire_seconds: 300
+metrics_enabled: false

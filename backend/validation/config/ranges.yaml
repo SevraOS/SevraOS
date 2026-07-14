@@ -1,0 +1,25 @@
+ranges:
+  heart_rate:
+    min: 30
+    max: 220
+  spo2:
+    min: 50
+    max: 100
+  respiratory_rate:
+    min: 4
+    max: 60
+  systolic:
+    min: 50
+    max: 250
+  diastolic:
+    min: 30
+    max: 150
+  map:
+    min: 40
+    max: 180
+  temperature:
+    min: 32.0
+    max: 43.0
+  glucose:
+    min: 20
+    max: 800

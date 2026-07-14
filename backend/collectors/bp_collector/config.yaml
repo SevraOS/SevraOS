@@ -1,0 +1,35 @@
+# Blood Pressure Collector Configuration
+# HELIOS OS + SEVRA AI
+
+device_id: "BP-BED-01-ICU"
+device_type: "blood_pressure"
+facility_id: "FACILITY-001"
+ward: "ICU"
+bed: "BED-01"
+
+# Transport: "serial" or "usb"
+transport: "serial"
+
+# Serial settings (used when transport = serial)
+port: "/dev/ttyUSB1"      # Windows: "COM4"
+baud_rate: 9600
+bytesize: 8
+parity: "N"
+stopbits: 1
+frame_delimiter: "\r\n"
+read_timeout: 2.0
+
+# USB settings (used when transport = usb)
+vendor_id: 0x04D9
+product_id: 0x1234
+interface: 0
+endpoint: 0x81
+read_size: 64
+read_timeout_ms: 1000
+
+# Collector settings
+frame_buffer_size: 256
+reconnect_base_delay: 2.0
+reconnect_max_delay: 120.0
+reconnect_factor: 2.0
+max_reconnect_attempts: 0

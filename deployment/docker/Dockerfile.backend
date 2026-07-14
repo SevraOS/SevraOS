@@ -1,0 +1,70 @@
+# HELIOS OS + SEVRA AI Production Backend
+# Optimized multi-stage build — base image builds in ~2 min.
+# AI-heavy deps (numpy, onnxruntime, sklearn) are ONLY installed
+# when AI_EXTRAS=1 is passed (i.e. the ai-service only).
+
+ARG AI_EXTRAS=0
+ARG PYTHON_VERSION=3.12
+
+# ── Stage 1: System deps builder ─────────────────────────────────────────────
+FROM python:${PYTHON_VERSION}-slim AS builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    sqlcipher \
+    libsqlcipher-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy ONLY the dependency manifests first (cache-friendly layer)
+COPY backend/pyproject.toml backend/README.md ./
+
+# Install base runtime deps (no numpy/onnxruntime/sklearn)
+RUN pip install --user --no-cache-dir \
+    fastapi "uvicorn[standard]" pydantic pydantic-settings \
+    "sqlalchemy[asyncio]" alembic aiosqlite asyncpg \
+    redis structlog prometheus-client \
+    "python-jose[cryptography]" "passlib[argon2]" \
+    httpx pyyaml python-multipart anyio tenacity orjson \
+    pyserial-asyncio bleak pyusb hl7 bitstring crcmod \
+    PyJWT
+
+# ── Stage 1b: AI extras (only when AI_EXTRAS=1) ───────────────────────────────
+FROM builder AS builder-ai
+RUN pip install --user --no-cache-dir \
+    onnxruntime numpy "scikit-learn" scipy
+
+# ── Selector: pick the right builder stage ───────────────────────────────────
+FROM builder AS builder-base
+FROM builder-ai AS builder-full
+
+# ── Stage 2: Lean runtime image ──────────────────────────────────────────────
+FROM python:${PYTHON_VERSION}-slim AS runtime
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    sqlcipher \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Non-root user for security
+RUN useradd -m helios_user && chown -R helios_user /app
+
+# ── Runtime: base (dashboard-api, integration-service) ───────────────────────
+FROM runtime AS final-base
+COPY --from=builder-base --chown=helios_user:helios_user /root/.local /home/helios_user/.local
+ENV PATH=/home/helios_user/.local/bin:$PATH
+COPY backend/ /app/
+USER helios_user
+EXPOSE 8000
+CMD ["uvicorn", "dashboard.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+
+# ── Runtime: full with AI deps (ai-service) ───────────────────────────────────
+FROM runtime AS final-full
+COPY --from=builder-full --chown=helios_user:helios_user /root/.local /home/helios_user/.local
+ENV PATH=/home/helios_user/.local/bin:$PATH
+COPY backend/ /app/
+USER helios_user
+EXPOSE 8000
+CMD ["uvicorn", "dashboard.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=SevraOS Startup
+Comment=Start patient telemetry interface in kiosk mode
+Exec=/usr/local/bin/sevra-start
+Terminal=false
+X-GNOME-Autostart-enabled=true
+X-KDE-autostart-after=panel

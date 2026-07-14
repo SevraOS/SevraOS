@@ -1,0 +1,12 @@
+environment: development
+debug: true
+log_level: DEBUG
+log_format: console
+workers: 1
+rate_limit_enabled: false
+postgres_pool_size: 2
+redis_max_connections: 5
+cors_origins:
+  - "http://localhost:3000"
+  - "http://localhost:8080"
+  - "http://127.0.0.1:3000"

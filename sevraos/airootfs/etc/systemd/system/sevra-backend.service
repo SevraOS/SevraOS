@@ -1,0 +1,14 @@
+[Unit]
+Description=SevraOS Edge Telemetry Backend
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/sevra/backend
+ExecStart=/usr/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+echo "Starting SevraOS User Environment..."
+
+# Wait for backend to be online
+echo "Waiting for Edge Telemetry Backend to start..."
+until curl -s http://127.0.0.1:8000/api/status > /dev/null; do
+    sleep 0.5
+done
+echo "Backend is online."
+
+# Launch Chromium in kiosk mode pointing to the patient terminal
+exec chromium --no-first-run --disable-session-crashed-bubble --kiosk http://127.0.0.1:8000/

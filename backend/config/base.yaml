@@ -1,0 +1,49 @@
+environment: development
+service_name: helios-backend
+service_version: "1.0.0"
+
+host: "0.0.0.0"
+port: 8000
+workers: 1
+debug: false
+
+redis_host: localhost
+redis_port: 6379
+redis_db: 0
+redis_ssl: false
+redis_max_connections: 20
+
+sqlite_path: "./data/helios_edge.db"
+sqlite_pool_size: 5
+sqlite_max_overflow: 10
+
+postgres_host: localhost
+postgres_port: 5432
+postgres_db: helios
+postgres_user: helios
+postgres_ssl: false
+postgres_pool_size: 5
+postgres_max_overflow: 10
+postgres_pool_timeout: 30.0
+postgres_pool_recycle: 3600
+
+jwt_algorithm: RS256
+jwt_access_token_expire_seconds: 900
+jwt_refresh_token_expire_seconds: 604800
+jwt_issuer: helios-security-service
+jwt_audience: helios-platform
+
+log_level: INFO
+log_format: json
+
+metrics_enabled: true
+health_check_timeout: 5.0
+
+rate_limit_enabled: true
+rate_limit_requests_per_minute: 60
+
+facility_id: FACILITY-001
+
+cors_origins:
+  - "http://localhost:3000"
+  - "http://localhost:8080"

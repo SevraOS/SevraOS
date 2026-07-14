@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+echo "Starting SevraOS Recovery Utility..."
+if [ -f /opt/sevra/recovery/recovery.sh ]; then
+    bash /opt/sevra/recovery/recovery.sh
+else
+    echo "Recovery script not found at /opt/sevra/recovery/recovery.sh"
+fi

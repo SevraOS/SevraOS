@@ -1,0 +1,50 @@
+# HELIOS OS + SEVRA AI
+# Section 14: K8s Configs, PVs, Secrets
+apiVersion: v1
+kind: Secret
+metadata:
+  name: helios-secrets
+  namespace: helios-production
+type: Opaque
+stringData:
+  HELIOS_JWT_SECRET: "production-secure-jwt-key"
+  HELIOS_SQLITE_ENCRYPTION_KEY: "production-sqlite-key"
+  HELIOS_EHR_CLIENT_SECRET: "epic-client-secret"
+  POSTGRES_PASSWORD: "secure-pg-password"
+  REDIS_PASSWORD: "secure-redis-password"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: helios-config
+  namespace: helios-production
+data:
+  HELIOS_ENVIRONMENT: "production"
+  HELIOS_EHR_VENDOR: "epic"
+  HELIOS_FHIR_URL: "https://fhir.epic.com/api"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: helios-production
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: helios-pdb
+  namespace: helios-production
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: dashboard-api

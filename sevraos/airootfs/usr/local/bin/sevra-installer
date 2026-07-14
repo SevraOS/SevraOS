@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+echo "Starting SevraOS Installer..."
+echo "This is a placeholder for the SevraOS installation workflow."

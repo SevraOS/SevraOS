@@ -1,0 +1,17 @@
+environment: production
+debug: false
+log_level: INFO
+log_format: json
+workers: 4
+redis_ssl: true
+redis_max_connections: 50
+postgres_ssl: true
+postgres_pool_size: 20
+postgres_max_overflow: 40
+postgres_pool_timeout: 30.0
+postgres_pool_recycle: 1800
+rate_limit_enabled: true
+rate_limit_requests_per_minute: 60
+metrics_enabled: true
+health_check_timeout: 5.0
+cors_origins: []

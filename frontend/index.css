@@ -1,0 +1,1344 @@
+/* SevraOS Premium Stylesheet - Mapped Meticulously to Figma Design */
+
+:root {
+    --transition-speed: 0.3s;
+    --font-primary: 'Outfit', sans-serif;
+    
+    /* Dark Mode Theme Specs (Exact Figma Palettes) */
+    --bg-body: #060d17;
+    --bg-sidebar: #09101d;
+    --bg-header: #09101d;
+    --bg-card: rgba(9, 16, 29, 0.75);
+    --bg-card-hover: rgba(13, 23, 41, 0.85);
+    --border-card: 1px solid rgba(255, 255, 255, 0.08);
+    --border-card-hover: 1px solid rgba(255, 255, 255, 0.15);
+    --shadow-card: 0 4px 20px 0 rgba(0, 0, 0, 0.4);
+    
+    /* Text Colors */
+    --text-primary: #ffffff;
+    --text-secondary: #94a3b8;
+    --text-muted: #475569;
+    
+    /* Vitals Colors */
+    --color-bp: #ff1744;         /* Red */
+    --color-hr: #ffd600;         /* Yellow */
+    --color-temp: #00e5ff;       /* Cyan */
+    --color-spo2: #00e676;       /* Green */
+    --color-blue: #2979ff;       /* Blue */
+    
+    --header-height: 64px;
+    --sidebar-width: 72px;
+    --sidebar-expanded-width: 240px;
+}
+
+/* Light Mode Override */
+body.light-mode {
+    --bg-body: #f4f6f9;
+    --bg-sidebar: #ffffff;
+    --bg-header: #ffffff;
+    --bg-card: rgba(255, 255, 255, 0.9);
+    --bg-card-hover: #ffffff;
+    --border-card: 1px solid rgba(0, 0, 0, 0.08);
+    --border-card-hover: 1px solid rgba(0, 0, 0, 0.15);
+    --shadow-card: 0 4px 20px 0 rgba(15, 23, 42, 0.05);
+    
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+}
+
+/* Resets */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-primary);
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+}
+
+/* Grid Layout */
+.app-container {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
+    grid-template-rows: 100vh;
+    width: 100%;
+    height: 100%;
+}
+
+/* SIDEBAR STYLES */
+.sidebar {
+    background-color: var(--bg-sidebar);
+    border-right: var(--border-card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    z-index: 100;
+    transition: width var(--transition-speed) ease, background-color var(--transition-speed) ease;
+}
+
+.sidebar-header {
+    margin-bottom: 30px;
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+}
+
+body.light-mode .menu-toggle:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    padding: 0 10px;
+}
+
+.nav-item {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    width: 100%;
+    height: 52px;
+    border-radius: 50%; /* Circle shape as in Figma */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.sidebar.expanded .nav-item {
+    border-radius: 12px; /* expand into standard tabs */
+    justify-content: flex-start;
+    padding-left: 18px;
+}
+
+.nav-item:hover {
+    color: var(--text-primary);
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+body.light-mode .nav-item:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.nav-item.active {
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--color-bp), #ff5252);
+    box-shadow: 0 0 15px rgba(255, 23, 68, 0.4);
+}
+
+.nav-label {
+    display: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-left: 12px;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    width: 100%;
+    padding: 0 10px;
+}
+
+.logout-btn:hover {
+    color: var(--color-bp);
+    background-color: rgba(255, 23, 68, 0.1);
+}
+
+/* MAIN PANEL CONTENT */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100%;
+}
+
+/* TOP HEADER */
+.top-header {
+    height: var(--header-height);
+    background-color: var(--bg-header);
+    border-bottom: var(--border-card);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 90;
+    transition: background-color var(--transition-speed) ease;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo-icon {
+    font-size: 2rem;
+    color: var(--color-bp);
+    filter: drop-shadow(0 0 8px rgba(255, 23, 68, 0.4));
+}
+
+.header-logo h1 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.patient-info-strip {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.info-item {
+    font-size: 0.85rem;
+}
+
+.info-label {
+    color: var(--text-secondary);
+    margin-right: 4px;
+}
+
+.info-value {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 23, 68, 0.1);
+    border: 1px solid rgba(255, 23, 68, 0.2);
+    padding: 4px 12px;
+    border-radius: 16px;
+}
+
+.live-dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--color-bp);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--color-bp);
+    animation: blinker 1.5s linear infinite;
+}
+
+.live-text {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--color-bp);
+    letter-spacing: 0.5px;
+}
+
+/* VIEWPORT & CARDS */
+.page-viewport {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.page-panel {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.page-panel.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Glass Card */
+.glass-card {
+    background-color: var(--bg-card);
+    border: var(--border-card);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+    padding: 16px;
+    transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+    border: var(--border-card-hover);
+    background-color: var(--bg-card-hover);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 8px;
+}
+
+body.light-mode .card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+}
+
+/* DASHBOARD SPECIFIC LAYOUT */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.live-vitals-card {
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-container-large {
+    flex: 1;
+    position: relative;
+    width: 100%;
+}
+
+.chart-container-large canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Vitals Numeric Card Outline Border (Figma Style) */
+.vitals-numeric-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.vital-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 18px;
+    height: 140px;
+    border-radius: 12px;
+    background: var(--bg-card);
+    border: 1px solid transparent;
+}
+
+/* Full thin outline borders as in Figma */
+.bp-card { border-color: var(--color-bp); box-shadow: 0 0 10px rgba(255, 23, 68, 0.1); }
+.bp-card .vital-value { color: var(--color-bp); }
+.bp-card .vital-range { color: var(--color-bp); }
+
+.hr-card { border-color: var(--color-hr); box-shadow: 0 0 10px rgba(255, 214, 0, 0.1); }
+.hr-card .vital-value { color: var(--color-hr); }
+.hr-card .vital-range { color: var(--color-hr); }
+
+.temp-card { border-color: var(--color-temp); box-shadow: 0 0 10px rgba(0, 229, 255, 0.1); }
+.temp-card .vital-value { color: var(--color-temp); }
+.temp-card .vital-range { color: var(--color-temp); }
+
+.spo2-card { border-color: var(--color-spo2); box-shadow: 0 0 10px rgba(0, 230, 118, 0.1); }
+.spo2-card .vital-value { color: var(--color-spo2); }
+.spo2-card .vital-range { color: var(--color-spo2); }
+
+.vital-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.vital-value {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 8px 0;
+}
+
+.vital-range {
+    font-size: 0.72rem;
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+/* Timeline Custom Step Colors (Figma Specific Styles) */
+.timeline-card {
+    padding: 16px 20px;
+}
+
+.horizontal-timeline-container {
+    position: relative;
+    margin: 25px 0 5px 0;
+}
+
+.timeline-line {
+    position: absolute;
+    top: 8px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    z-index: 1;
+}
+
+.timeline-steps {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+}
+
+.timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.timeline-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: var(--bg-body);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+}
+
+/* Styles for individual timeline nodes */
+.timeline-step.completed .timeline-dot {
+    border-color: var(--color-spo2);
+    background-color: var(--color-spo2);
+    color: #ffffff;
+}
+
+.timeline-step.active-step .timeline-dot {
+    border-color: var(--color-bp);
+    background-color: var(--bg-body);
+}
+
+.timeline-badge {
+    background: rgba(9, 16, 29, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 8px 12px;
+    width: 130px;
+    text-align: center;
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+/* Custom background pills mapping to Figma colors */
+.timeline-step:nth-child(1) .timeline-badge { /* Medication - Blue */
+    background-color: rgba(41, 121, 255, 0.15);
+    border-color: var(--color-blue);
+}
+.timeline-step:nth-child(1) .timeline-badge-title { color: var(--color-blue); }
+
+.timeline-step:nth-child(2) .timeline-badge { /* Vitals Stable - Green */
+    background-color: rgba(0, 230, 118, 0.15);
+    border-color: var(--color-spo2);
+}
+.timeline-step:nth-child(2) .timeline-badge-title { color: var(--color-spo2); }
+
+.timeline-step:nth-child(3) .timeline-badge { /* HR Rising - Orange */
+    background-color: rgba(255, 109, 0, 0.15);
+    border-color: #ff6d00;
+}
+.timeline-step:nth-child(3) .timeline-badge-title { color: #ff6d00; }
+
+.timeline-step:nth-child(4) .timeline-badge { /* Emergency Alert - Red */
+    background-color: rgba(255, 23, 68, 0.15);
+    border-color: var(--color-bp);
+}
+.timeline-step:nth-child(4) .timeline-badge-title { color: var(--color-bp); }
+
+.timeline-step:nth-child(5) .timeline-badge { /* Doctor Review - Dark Blue */
+    background-color: rgba(41, 121, 255, 0.15);
+    border-color: var(--color-blue);
+}
+.timeline-step:nth-child(5) .timeline-badge-title { color: var(--color-blue); }
+
+.timeline-step:nth-child(6) .timeline-badge { /* BP Stable - Green */
+    background-color: rgba(0, 230, 118, 0.15);
+    border-color: var(--color-spo2);
+}
+.timeline-step:nth-child(6) .timeline-badge-title { color: var(--color-spo2); }
+
+.timeline-badge-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.timeline-badge-sub {
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+}
+
+.timeline-time {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-top: 6px;
+}
+
+/* Risk Prediction Card */
+.risk-chart-wrapper {
+    position: relative;
+    height: 160px;
+    width: 100%;
+}
+
+.risk-chart-wrapper canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.risk-badge {
+    position: absolute;
+    top: 30px;
+    right: 20px;
+    background: var(--color-bp);
+    color: white;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 3px 8px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(255, 23, 68, 0.4);
+}
+
+/* Patient Status Box */
+.status-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: calc(100% - 30px);
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.status-indicator.unstable {
+    background: rgba(255, 23, 68, 0.1);
+    border: 1px solid rgba(255, 23, 68, 0.2);
+    color: var(--color-bp);
+}
+
+.pulse-icon {
+    font-size: 1.8rem;
+    animation: heartbeat 1.2s infinite;
+}
+
+.status-state {
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.status-details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+}
+
+.detail-label {
+    color: var(--text-secondary);
+}
+
+.detail-val {
+    font-weight: 600;
+}
+
+/* AI Insight */
+.insight-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: calc(100% - 30px);
+}
+
+.insight-brain {
+    font-size: 1.8rem;
+    color: var(--color-temp);
+    filter: drop-shadow(0 0 4px rgba(0, 229, 255, 0.3));
+}
+
+.insight-text {
+    font-size: 0.8rem;
+    line-height: 1.45;
+}
+
+.confidence-container {
+    margin-top: 10px;
+}
+
+.confidence-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.progress-bar-bg {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--color-temp), var(--color-blue));
+    border-radius: 2px;
+}
+
+/* PATIENT RECORDS VIEW */
+.records-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.patient-summary-card {
+    height: 250px;
+}
+
+.summary-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: calc(100% - 30px);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 0;
+}
+
+.info-row {
+    font-size: 0.8rem;
+}
+
+.info-lbl {
+    color: var(--text-secondary);
+}
+
+.vitals-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 10px;
+}
+
+.mini-vital {
+    padding: 6px 4px;
+    border-radius: 6px;
+}
+
+.mini-label {
+    font-size: 0.65rem;
+}
+
+.mini-value {
+    font-size: 0.78rem;
+}
+
+/* Clinical Flags */
+.flags-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.flag-item {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+}
+
+/* Medications table layout */
+.medication-card {
+    height: 310px;
+    display: flex;
+    flex-direction: column;
+}
+
+.custom-table th {
+    font-size: 0.7rem;
+    padding: 10px 12px;
+}
+
+.custom-table td {
+    padding: 10px 12px;
+    font-size: 0.78rem;
+}
+
+/* Clinical Note (Yellow Card) */
+.clinical-note-card {
+    background-color: rgba(255, 214, 0, 0.02);
+    border: 1px solid rgba(255, 214, 0, 0.12);
+    border-radius: 12px;
+    padding: 16px;
+    height: 250px;
+    overflow-y: auto;
+}
+
+.note-title {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--color-hr);
+    margin-bottom: 8px;
+}
+
+.note-list li {
+    font-size: 0.78rem;
+    line-height: 1.4;
+}
+
+/* AI Clinical Summary Content */
+.ai-summary-content {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 30px);
+    justify-content: space-between;
+}
+
+.summary-columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.summary-col h5 {
+    font-size: 0.7rem;
+}
+
+.summary-col ul {
+    font-size: 0.75rem;
+    gap: 4px;
+}
+
+/* Sepsis and Gauges */
+.sepsis-progress-container {
+    margin-top: 5px;
+}
+
+.sepsis-header {
+    font-size: 0.75rem;
+}
+
+.radial-gauge-container {
+    width: 90px;
+    height: 90px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.radial-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.gauge-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.06);
+    stroke-width: 8;
+}
+
+body.light-mode .gauge-bg {
+    stroke: rgba(0, 0, 0, 0.06);
+}
+
+.gauge-fill {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease, stroke 0.5s ease;
+}
+
+.gauge-fill.yellow-gauge {
+    stroke: var(--color-hr);
+}
+
+.gauge-fill.red-gauge {
+    stroke: var(--color-bp);
+}
+
+.gauge-fill.green-gauge {
+    stroke: var(--color-spo2);
+}
+
+.gauge-text-overlay {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.gauge-percent {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.gauge-status-label {
+    font-size: 0.55rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+/* 3. LIVE VITALS GRID */
+.vitals-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 16px;
+}
+
+.waveform-card {
+    min-height: 180px;
+}
+
+.wave-num-value {
+    font-size: 1.6rem;
+}
+
+.mini-vital-card {
+    padding: 12px 16px;
+}
+
+.mini-vital-large {
+    font-size: 1.4rem;
+}
+
+.vitals-controls-panel {
+    gap: 16px;
+}
+
+.device-item {
+    padding: 8px 12px;
+    gap: 10px;
+}
+
+.device-name {
+    font-size: 0.78rem;
+}
+
+.device-status {
+    font-size: 0.6rem;
+}
+
+/* Quick Actions buttons */
+.btn-action, .btn-action-danger {
+    padding: 10px 14px;
+    gap: 10px;
+}
+
+.action-btn-title {
+    font-size: 0.78rem;
+}
+
+.action-btn-sub {
+    font-size: 0.6rem;
+}
+
+/* Reports Split Screen View */
+.reports-grid-layout {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 16px;
+}
+
+.report-repository-card {
+    height: 440px;
+}
+
+.filter-btn {
+    padding: 5px 10px;
+    font-size: 0.68rem;
+}
+
+.confidence-engine-card {
+    height: 440px;
+}
+
+.engine-lbl {
+    font-size: 0.8rem;
+}
+
+.engine-percent {
+    font-size: 0.8rem;
+}
+
+.finding-alert-item {
+    padding: 8px 12px;
+}
+
+.finding-desc {
+    font-size: 0.75rem;
+}
+
+/* Scan comparison handle slider */
+.scan-comparison-card {
+    height: 440px;
+}
+
+.comparison-split-grid {
+    grid-template-columns: 130px 1fr;
+    gap: 12px;
+}
+
+.scan-thumb {
+    padding: 6px;
+    gap: 6px;
+}
+
+.thumb-label {
+    font-size: 0.68rem;
+}
+
+.split-slider-wrapper {
+    height: 250px;
+}
+
+.scan-img-overlay-label {
+    font-size: 0.6rem;
+    padding: 3px 6px;
+}
+
+/* 5. PATIENT HISTORY LAYOUT */
+.history-grid-layout {
+    gap: 16px;
+}
+
+.habits-bar {
+    gap: 12px;
+}
+
+.habit-box {
+    height: 100px;
+    padding: 12px;
+}
+
+.habit-value {
+    font-size: 1.25rem;
+}
+
+.allergy-detail-row {
+    padding: 6px 0;
+}
+
+.allergy-name {
+    font-size: 0.8rem;
+}
+
+.allergy-check-msg {
+    padding: 8px 10px;
+    font-size: 0.68rem;
+}
+
+.vaccine-checklist {
+    gap: 8px;
+}
+
+.vaccine-item {
+    font-size: 0.75rem;
+}
+
+.family-tree-card {
+    height: 310px;
+}
+
+.tree-node {
+    width: 95px;
+    padding: 6px 8px;
+}
+
+.tree-node .node-relation {
+    font-size: 0.68rem;
+}
+
+.tree-node .node-meta {
+    font-size: 0.55rem;
+}
+
+.line-g-p {
+    height: 35px;
+    top: 50px;
+}
+
+.line-p-c {
+    height: 35px;
+    top: 130px;
+}
+
+/* Medical timeline */
+.medical-timeline-card {
+    height: 160px;
+}
+
+.timeline-slider-wrapper {
+    margin: 25px 30px 10px 30px;
+}
+
+.timeline-node-item {
+    width: 120px;
+}
+
+.node-year {
+    font-size: 0.7rem;
+}
+
+.node-title {
+    font-size: 0.62rem;
+}
+
+/* 6. SETTINGS VIEW */
+.settings-grid-layout {
+    gap: 16px;
+}
+
+.settings-title-section h2 {
+    font-size: 1.25rem;
+}
+
+.btn-danger-action, .btn-secondary-action {
+    padding: 8px 14px;
+    font-size: 0.78rem;
+}
+
+.dropdowns-row {
+    gap: 12px;
+}
+
+.custom-select {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+}
+
+.critical-thresholds-card {
+    height: 200px;
+}
+
+.number-input {
+    font-size: 0.8rem;
+    padding: 6px 0;
+}
+
+/* Base button values */
+.btn {
+    font-size: 0.75rem;
+}
+
+/* Keyframe animations */
+@keyframes blinker {
+    50% { opacity: 0.2; }
+}
+
+/* 7. SETUP GUIDE VIEW */
+.setup-grid-layout {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--grid-gap);
+}
+
+.setup-title-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 15px;
+    margin-bottom: var(--grid-gap);
+    width: 100%;
+}
+
+body.light-mode .setup-title-section {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.setup-title-section h2 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.setup-card {
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+.setup-steps-list {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+    flex: 1;
+    padding-right: 5px;
+}
+
+.setup-step-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.setup-step-header {
+    display: flex;
+    align-items: center;
+}
+
+.setup-step-num {
+    background: #ff3d00;
+    color: #ffffff;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 800;
+    margin-right: 10px;
+    box-shadow: 0 0 10px rgba(255, 61, 0, 0.3);
+}
+
+.setup-step-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.setup-step-desc {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.setup-code-block {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 12px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.78rem;
+    color: #ffd600;
+    overflow-x: auto;
+    white-space: pre;
+    margin-top: 5px;
+}
+
+body.light-mode .setup-code-block {
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    color: #0f172a;
+}
+
+/* Live indicator offline state */
+.live-indicator.offline {
+    background: rgba(148, 163, 184, 0.1) !important;
+    border: 1px solid rgba(148, 163, 184, 0.25) !important;
+}
+
+.live-indicator.offline .live-dot {
+    background-color: #94a3b8 !important;
+    box-shadow: none !important;
+    animation: none !important;
+}
+
+.live-indicator.offline .live-text {
+    color: #94a3b8 !important;
+}
+
+/* Modal Dialogs Layout */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(5, 7, 10, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: var(--bg-sidebar);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+body.light-mode .modal-content {
+    background-color: var(--bg-sidebar);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+
+.width-sm {
+    width: 320px;
+}
+
+.modal-header-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: var(--text-primary);
+    text-transform: uppercase;
+}
+
+.modal-body-text {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    font-size: 0.78rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+body.light-mode .btn-outline {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+.btn-outline:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+body.light-mode .btn-outline:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.btn-danger {
+    background: var(--color-bp);
+    color: white;
+    padding: 8px 16px;
+    font-size: 0.78rem;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    font-weight: 600;
+}
+.btn-danger:hover {
+    background: #ff3d00;
+    box-shadow: 0 0 12px rgba(255, 23, 68, 0.4);
+}
+
+/* Clickable Setting & Genogram Selection */
+.clickable-setting {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.clickable-setting:hover {
+    background-color: rgba(255, 255, 255, 0.04);
+}
+body.light-mode .clickable-setting:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.tree-node {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.tree-node:hover {
+    filter: brightness(1.2);
+    transform: scale(1.05);
+}
+.tree-node.selected-member {
+    border: 2px solid var(--color-temp) !important;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+}
+
+/* Chart Filter Disabled Trend */
+.chart-legend .legend-item {
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+.chart-legend .legend-item.disabled {
+    opacity: 0.25;
+    text-decoration: line-through;
+}

@@ -1,0 +1,34 @@
+# SpO2 Collector Configuration
+# HELIOS OS + SEVRA AI
+
+device_id: "SPO2-BED-01-ICU"
+device_type: "spo2"
+facility_id: "FACILITY-001"
+ward: "ICU"
+bed: "BED-01"
+
+# Transport: "ble" or "serial"
+transport: "ble"
+
+# BLE settings (used when transport = ble)
+ble_address: "AA:BB:CC:DD:EE:FF"
+service_uuid: "0000180D-0000-1000-8000-00805F9B34FB"
+characteristic_uuid: "00002A37-0000-1000-8000-00805F9B34FB"
+scan_timeout: 10.0
+disconnect_timeout: 5.0
+
+# Serial settings (used when transport = serial)
+port: "/dev/ttyUSB2"      # Windows: "COM5"
+baud_rate: 9600
+frame_delimiter: "\r\n"
+read_timeout: 2.0
+
+# Adapter mode: "auto" | "ble" | "ascii"
+adapter_mode: "auto"
+
+# Collector settings
+frame_buffer_size: 256
+reconnect_base_delay: 1.0
+reconnect_max_delay: 60.0
+reconnect_factor: 2.0
+max_reconnect_attempts: 0

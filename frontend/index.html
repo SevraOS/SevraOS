@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SevraOS Patient Terminal</title>
+    <!-- Google Fonts: Outfit & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0..1,0&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body class="dark-mode">
+    <div class="app-container">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <button class="menu-toggle" id="sidebarMenuToggle">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-page="dashboard" title="Dashboard">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="nav-label">Dashboard</span>
+                </button>
+                <button class="nav-item" data-page="records" title="Patient Records">
+                    <span class="material-symbols-outlined">assignment</span>
+                    <span class="nav-label">Patient Records</span>
+                </button>
+                <button class="nav-item" data-page="vitals" title="Live Vitals">
+                    <span class="material-symbols-outlined">monitoring</span>
+                    <span class="nav-label">Live Vitals</span>
+                </button>
+                <button class="nav-item" data-page="reports" title="Reports">
+                    <span class="material-symbols-outlined">analytics</span>
+                    <span class="nav-label">Reports</span>
+                </button>
+                <button class="nav-item" data-page="history" title="Patient History">
+                    <span class="material-symbols-outlined">history</span>
+                    <span class="nav-label">Patient History</span>
+                </button>
+                <button class="nav-item" data-page="setup" title="Setup Guide">
+                    <span class="material-symbols-outlined">construction</span>
+                    <span class="nav-label">Setup Guide</span>
+                </button>
+                <button class="nav-item" data-page="settings" title="Settings">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span class="nav-label">Settings</span>
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="nav-item logout-btn" id="logoutBtn" title="Log Out">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span class="nav-label">Log Out</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTAINER -->
+        <main class="main-content">
+            
+            <!-- TOP PATIENT HEADER -->
+            <header class="top-header">
+                <div class="header-logo">
+                    <span class="material-symbols-outlined logo-icon">psychology</span>
+                    <h1>SEVRA OS</h1>
+                </div>
+                <div class="patient-info-strip">
+                    <div class="info-item">
+                        <span class="info-label">Supervised :</span>
+                        <span class="info-value" id="hdrSupervised">Dr. Geet Jain</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Patient Name :</span>
+                        <span class="info-value" id="hdrPatientName">Sarth Mohite</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Patient ID :</span>
+                        <span class="info-value" id="hdrPatientId">SID 1294-Deep</span>
+                    </div>
+                </div>
+                <div class="live-indicator" id="liveIndicator">
+                    <span class="live-dot" id="liveDot"></span>
+                    <span class="live-text" id="liveText">LIVE</span>
+                </div>
+            </header>
+
+            <!-- PAGES CONTAINER -->
+            <div class="page-viewport">
+
+                <!-- 1. DASHBOARD PAGE -->
+                <section class="page-panel active" id="page-dashboard">
+                    <div class="dashboard-grid">
+                        
+                        <!-- Live Vitals Chart Card -->
+                        <div class="glass-card span-cols-4 live-vitals-card">
+                            <div class="card-header">
+                                <h3 class="card-title">LIVE VITALS MONITORING</h3>
+                                <div class="chart-legend">
+                                    <span class="legend-item hr"><span class="legend-color"></span>HR (bpm)</span>
+                                    <span class="legend-item bp"><span class="legend-color"></span>BP (mmHg)</span>
+                                    <span class="legend-item spo2"><span class="legend-color"></span>SpO2 (%)</span>
+                                </div>
+                            </div>
+                            <div class="chart-container-large">
+                                <canvas id="dashboardTelemetryCanvas"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Numeric Vitals Grid -->
+                        <div class="vitals-numeric-grid span-cols-4">
+                            <div class="glass-card vital-box bp-card">
+                                <span class="vital-label">BP</span>
+                                <span class="vital-value" id="valBP">160/95</span>
+                                <span class="vital-range">90/60 - 140/90</span>
+                            </div>
+                            <div class="glass-card vital-box hr-card">
+                                <span class="vital-label">Heart Rate <span class="sub-label">BPM</span></span>
+                                <span class="vital-value" id="valHR">105</span>
+                                <span class="vital-range">60-100</span>
+                            </div>
+                            <div class="glass-card vital-box temp-card">
+                                <span class="vital-label">Temperature <span class="sub-label">°C</span></span>
+                                <span class="vital-value" id="valTemp">35.8</span>
+                                <span class="vital-range">36-37</span>
+                            </div>
+                            <div class="glass-card vital-box spo2-card">
+                                <span class="vital-label">SpO2 %</span>
+                                <span class="vital-value" id="valSpO2">97</span>
+                                <span class="vital-range">95-100</span>
+                            </div>
+                        </div>
+
+                        <!-- Live ICU Timeline -->
+                        <div class="glass-card span-cols-4 timeline-card">
+                            <div class="card-header">
+                                <h3 class="card-title">LIVE ICU TIMELINE</h3>
+                            </div>
+                            <div class="horizontal-timeline-container">
+                                <div class="timeline-line"></div>
+                                <div class="timeline-steps" id="timelineSteps">
+                                    <!-- Dynamic Timeline Steps -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Risk Prediction (Bottom Left) -->
+                        <div class="glass-card span-cols-2 risk-prediction-card">
+                            <div class="card-header">
+                                <h3 class="card-title">RISK PREDICTION (NEXT 2 HOURS)</h3>
+                                <button class="btn btn-secondary" id="btnGenerateRisk">GENERATE</button>
+                            </div>
+                            <div class="risk-chart-wrapper">
+                                <canvas id="riskPredictionCanvas"></canvas>
+                                <div class="risk-badge" id="riskValueBadge">72 %</div>
+                            </div>
+                        </div>
+
+                        <!-- Patient Status (Bottom Middle) -->
+                        <div class="glass-card patient-status-card">
+                            <div class="card-header">
+                                <h3 class="card-title">PATIENT STATUS <span class="info-icon">info</span></h3>
+                            </div>
+                            <div class="status-content">
+                                <div class="status-indicator unstable">
+                                    <span class="material-symbols-outlined pulse-icon">ecg</span>
+                                    <span class="status-state">UNSTABLE</span>
+                                </div>
+                                <div class="status-details">
+                                    <div class="detail-row">
+                                        <span class="detail-label">Primary Concern</span>
+                                        <span class="detail-val warning-text">Hypertension</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Trend</span>
+                                        <span class="detail-val error-text inline-flex">
+                                            Worsening
+                                            <span class="material-symbols-outlined">trending_up</span>
+                                        </span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Since</span>
+                                        <span class="detail-val">45 Minutes</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI Insight (Bottom Right) -->
+                        <div class="glass-card ai-insight-card">
+                            <div class="card-header">
+                                <h3 class="card-title">AI INSIGHT <span class="info-icon">info</span></h3>
+                            </div>
+                            <div class="insight-content">
+                                <div class="insight-icon-bar">
+                                    <span class="material-symbols-outlined insight-brain">neurology</span>
+                                </div>
+                                <p class="insight-text">
+                                    Patient responding positively to antihypertensive treatment. 
+                                    <span class="highlight-green">BP reduced 8%</span> over previous 45 mins.
+                                </p>
+                                <div class="confidence-container">
+                                    <div class="confidence-header">
+                                        <span>Confidence</span>
+                                        <span id="aiConfidenceVal">94%</span>
+                                    </div>
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill" style="width: 94%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- 2. PATIENT RECORDS PAGE -->
+                <section class="page-panel" id="page-records">
+                    <div class="records-grid">
+                        
+                        <!-- Patient Summary -->
+                        <div class="glass-card span-cols-2 patient-summary-card">
+                            <div class="card-header">
+                                <h3 class="card-title"><span class="material-symbols-outlined card-header-icon">person</span>PATIENT SUMMARY</h3>
+                                <button class="btn-edit-round"><span class="material-symbols-outlined">edit</span></button>
+                            </div>
+                            <div class="summary-details">
+                                <div class="info-grid">
+                                    <div class="info-row">
+                                        <span class="info-lbl">Bed Number :</span>
+                                        <span class="info-val">ICU-04</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="info-lbl">Doctor Assigned :</span>
+                                        <span class="info-val">Dr. Geet Jain</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="info-lbl">Primary Diagnosis :</span>
+                                        <span class="info-val">Severe Pneumonia</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="info-lbl">Emergency Contact :</span>
+                                        <span class="info-val">Anita Sharma</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="info-lbl">Current Condition :</span>
+                                        <span class="info-val condition-badge moderate">Moderate</span>
+                                    </div>
+                                </div>
+                                <div class="vitals-mini-grid">
+                                    <div class="mini-vital">
+                                        <span class="mini-label">Age</span>
+                                        <span class="mini-value">23 Years</span>
+                                    </div>
+                                    <div class="mini-vital">
+                                        <span class="mini-label">Gender</span>
+                                        <span class="mini-value">Male</span>
+                                    </div>
+                                    <div class="mini-vital">
+                                        <span class="mini-label">Blood Group</span>
+                                        <span class="mini-value">B+ ve</span>
+                                    </div>
+                                    <div class="mini-vital">
+                                        <span class="mini-label">Height</span>
+                                        <span class="mini-value">183 cm</span>
+                                    </div>
+                                    <div class="mini-vital">
+                                        <span class="mini-label">Weight</span>
+                                        <span class="mini-value">83 kg</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Clinical Flags -->
+                        <div class="glass-card span-cols-2 clinical-flags-card">
+                            <div class="card-header">
+                                <h3 class="card-title"><span class="material-symbols-outlined card-header-icon">flag</span>CLINICAL FLAGS</h3>
+                            </div>
+                            <div class="flags-list">
+                                <div class="flag-item error">
+                                    <span class="material-symbols-outlined">warning</span>
+                                    <span class="flag-text">Penicillin Allergy - skin rash</span>
+                                </div>
+                                <div class="flag-item warning">
+                                    <span class="material-symbols-outlined">info</span>
+                                    <span class="flag-text">Diabetic</span>
+                                </div>
+                                <div class="flag-item warning">
+                                    <span class="material-symbols-outlined">info</span>
+                                    <span class="flag-text">Hypertension</span>
+                                </div>
+                                <div class="flag-item warning">
+                                    <span class="material-symbols-outlined">airwave</span>
+                                    <span class="flag-text">Respiratory Risk</span>
+                                </div>
+                                <div class="flag-item success">
+                                    <span class="material-symbols-outlined">check_circle</span>
+                                    <span class="flag-text">No known food allergies</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Medication Schedule -->
+                        <div class="glass-card span-cols-4 medication-card">
+                            <div class="card-header">
+                                <h3 class="card-title"><span class="material-symbols-outlined card-header-icon">medication</span>MEDICATIONS</h3>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="custom-table" id="medicationsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Medication</th>
+                                            <th>Dose</th>
+                                            <th>Route</th>
+                                            <th>Work</th>
+                                            <th>Status</th>
+                                            <th>Next Dose</th>
+                                            <th>Timings</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Populated dynamically via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Clinical Note (Yellow Card) -->
+                        <div class="clinical-note-card span-cols-2">
+                            <h4 class="note-title">CLINICAL NOTE :</h4>
+                            <ul class="note-list">
+                                <li>58-year-old male with a history of Diabetes and Hypertension, admitted with fever, productive cough, and worsening shortness of breath.</li>
+                                <li>Chest X-ray and CT findings are consistent with Severe Community-Acquired Pneumonia.</li>
+                                <li>Laboratory investigations show elevated inflammatory markers, indicating active infection with early sepsis risk.</li>
+                                <li>Currently admitted to ICU-04, receiving oxygen support, IV antibiotics, and continuous monitoring for respiratory status.</li>
+                            </ul>
+                        </div>
+
+                        <!-- AI Clinical Summary -->
+                        <div class="glass-card ai-clinical-summary">
+                            <div class="card-header">
+                                <h3 class="card-title"><span class="material-symbols-outlined card-header-icon">clinical_notes</span>AI CLINICAL SUMMARY</h3>
+                            </div>
+                            <div class="ai-summary-content">
+                                <div class="summary-columns">
+                                    <div class="summary-col">
+                                        <h5>Primary Concerns</h5>
+                                        <ul class="bullet-list-red">
+                                            <li>Severe respiratory distress</li>
+                                            <li>Elevated inflammatory markers</li>
+                                            <li>Risk of secondary infection</li>
+                                        </ul>
+                                    </div>
+                                    <div class="summary-col">
+                                        <h5>Current Response</h5>
+                                        <ul class="bullet-list-check">
+                                            <li><span class="material-symbols-outlined bullet-check-icon">check</span>Severe respiratory distress</li>
+                                            <li><span class="material-symbols-outlined bullet-check-icon">check</span>Stable on 4th antibiotic</li>
+                                            <li><span class="material-symbols-outlined bullet-check-icon">check</span>Stable on 4th antibiotic</li>
+                                        </ul>
+                                    </div>
+                                    <div class="summary-col">
+                                        <h5>Recommendations</h5>
+                                        <ul class="bullet-list-rec">
+                                            <li>Continue current treatment plan</li>
+                                            <li>Monitor vitals every 30 minutes</li>
+                                            <li>Report chest X-ray in 24 hrs.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="sepsis-progress-container">
+                                    <div class="sepsis-header">
+                                        <span>Sepsis Risk : Moderate (22%)</span>
+                                    </div>
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill warning" style="width: 22%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Risk Score (Radial Gauge) -->
+                        <div class="glass-card risk-score-gauge-card">
+                            <div class="card-header">
+                                <h3 class="card-title">RISK SCORE</h3>
+                            </div>
+                            <div class="gauge-center-wrapper">
+                                <div class="radial-gauge-container">
+                                    <svg viewBox="0 0 100 100" class="radial-svg">
+                                        <circle cx="50" cy="50" r="40" class="gauge-bg"></circle>
+                                        <circle cx="50" cy="50" r="40" class="gauge-fill yellow-gauge" stroke-dasharray="251.2" stroke-dashoffset="195.9" id="recordsRiskCircle"></circle>
+                                    </svg>
+                                    <div class="gauge-text-overlay">
+                                        <span class="gauge-percent" id="recordsRiskPercent">22%</span>
+                                        <span class="gauge-status-label" id="recordsRiskLabel">Moderate risk</span>
+                                    </div>
+                                </div>
+                                <div class="gauge-trend-spark">
+                                    <canvas id="gaugeSparklineCanvas"></canvas>
+                                    <div class="gauge-spark-labels">
+                                        <span class="badge badge-trend">TRENDING</span>
+                                        <span class="badge badge-improving">IMPROVING</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- 3. LIVE VITALS PAGE -->
+                <section class="page-panel" id="page-vitals">
+                    <div class="vitals-grid-layout">
+                        
+                        <!-- Telemetry Waveforms -->
+                        <div class="vitals-waveforms-panel">
+                            <!-- ECG wave -->
+                            <div class="glass-card waveform-card">
+                                <div class="card-header">
+                                    <h3 class="card-title ecg-text">ECG - HEART RATE</h3>
+                                    <div class="waveform-numeric">
+                                        <span class="wave-num-value alert-text" id="vitalsValHR">78</span>
+                                        <span class="wave-num-unit">bpm</span>
+                                    </div>
+                                </div>
+                                <div class="waveform-body">
+                                    <canvas id="liveECGCanvas"></canvas>
+                                </div>
+                                <div class="waveform-footer">
+                                    <span>Normal 60-100 bpm</span>
+                                </div>
+                            </div>
+
+                            <!-- SpO2 wave -->
+                            <div class="glass-card waveform-card">
+                                <div class="card-header">
+                                    <h3 class="card-title spo2-text">SPO2 - OXYGEN RATE</h3>
+                                    <div class="waveform-numeric">
+                                        <span class="wave-num-value" id="vitalsValSpO2">98</span>
+                                        <span class="wave-num-unit">%</span>
+                                    </div>
+                                </div>
+                                <div class="waveform-body">
+                                    <canvas id="liveSpO2Canvas"></canvas>
+                                </div>
+                                <div class="waveform-footer">
+                                    <span>Normal > 95%</span>
+                                </div>
+                            </div>
+
+                            <!-- BP & Glucose Grid -->
+                            <div class="vitals-split-boxes">
+                                <div class="glass-card mini-vital-card bp-pulse">
+                                    <div class="mini-vital-header">
+                                        <span class="mini-title-label">BP</span>
+                                        <span class="mini-vital-large alert-text" id="vitalsValBP">122 <span class="slash">/</span> 76</span>
+                                        <span class="mini-vital-sub">mmHg</span>
+                                    </div>
+                                    <span class="mini-vital-normal-range">Normal: 70-100 mmHg</span>
+                                </div>
+                                <div class="glass-card mini-vital-card glucose-pulse">
+                                    <div class="mini-vital-header">
+                                        <span class="mini-title-label">BLOOD GLUCOSE</span>
+                                        <span class="mini-vital-large" id="vitalsValGlucose">6.8</span>
+                                        <span class="mini-vital-sub">mmol/L</span>
+                                    </div>
+                                    <span class="mini-vital-normal-range">Target 6-10 mmol/L</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Controls Panel -->
+                        <div class="vitals-controls-panel">
+                            
+                            <!-- Connected Devices -->
+                            <div class="glass-card devices-card">
+                                <div class="card-header">
+                                    <h3 class="card-title">CONNECTED DEVICES</h3>
+                                </div>
+                                <ul class="device-list">
+                                    <li class="device-item connected">
+                                        <span class="status-dot"></span>
+                                        <div class="device-details">
+                                            <span class="device-name">ECG Monitor</span>
+                                            <span class="device-status">Connected</span>
+                                        </div>
+                                    </li>
+                                    <li class="device-item connected">
+                                        <span class="status-dot"></span>
+                                        <div class="device-details">
+                                            <span class="device-name">Infusion Pump</span>
+                                            <span class="device-status">Connected</span>
+                                        </div>
+                                    </li>
+                                    <li class="device-item connected">
+                                        <span class="status-dot"></span>
+                                        <div class="device-details">
+                                            <span class="device-name">NIBP Monitor</span>
+                                            <span class="device-status">Connected</span>
+                                        </div>
+                                    </li>
+                                    <li class="device-item connected">
+                                        <span class="status-dot"></span>
+                                        <div class="device-details">
+                                            <span class="device-name">Pulse Oximeter</span>
+                                            <span class="device-status">Connected</span>
+                                        </div>
+                                    </li>
+                                    <li class="device-item connected">
+                                        <span class="status-dot"></span>
+                                        <div class="device-details">
+                                            <span class="device-name">Temp Probe</span>
+                                            <span class="device-status">Connected</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <div class="glass-card actions-card">
+                                <div class="card-header">
+                                    <h3 class="card-title">QUICK ACTIONS</h3>
+                                </div>
+                                <div class="action-buttons-group">
+                                    <button class="btn btn-action" id="btnRestartDevice">
+                                        <span class="material-symbols-outlined">restart_alt</span>
+                                        <div class="btn-text-block">
+                                            <span class="action-btn-title">Restart Device</span>
+                                            <span class="action-btn-sub">Reboot device remotely</span>
+                                        </div>
+                                    </button>
+                                    <button class="btn btn-action" id="btnSyncData">
+                                        <span class="material-symbols-outlined">sync</span>
+                                        <div class="btn-text-block">
+                                            <span class="action-btn-title">Sync Data</span>
+                                            <span class="action-btn-sub">Sync latest data from device</span>
+                                        </div>
+                                    </button>
+                                    <button class="btn btn-action-danger" id="btnDisconnectDevice">
+                                        <span class="material-symbols-outlined">link_off</span>
+                                        <div class="btn-text-block">
+                                            <span class="action-btn-title">Disconnect Device</span>
+                                            <span class="action-btn-sub">Safely disconnect device</span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Device Activity Timeline -->
+                            <div class="glass-card activity-timeline-card">
+                                <div class="card-header">
+                                    <h3 class="card-title">DEVICE ACTIVITY TIMELINE</h3>
+                                </div>
+                                <div class="activity-scroll" id="deviceActivityTimeline">
+                                    <!-- Dynamic logs -->
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- 4. REPORTS PAGE -->
+                <section class="page-panel" id="page-reports">
+                    <div class="reports-grid-layout">
+                        
+                        <!-- Report Repository (Left Column) -->
+                        <div class="glass-card report-repository-card">
+                            <div class="card-header">
+                                <h3 class="card-title">REPORT REPOSITORY</h3>
+                            </div>
+                            <div class="filter-tab-bar" id="reportFilters">
+                                <button class="filter-btn active" data-filter="ALL">ALL</button>
+                                <button class="filter-btn" data-filter="IMAGING">IMAGING</button>
+                                <button class="filter-btn" data-filter="LAB REPORTS">LAB REPORTS</button>
+                                <button class="filter-btn" data-filter="MICROBIOLOGY">MICROBIOLOGY</button>
+                                <button class="filter-btn" data-filter="PATHOLOGY">PATHOLOGY</button>
+                                <button class="filter-btn" data-filter="OTHERS">OTHERS</button>
+                            </div>
+                            <div class="table-responsive select-table-wrap">
+                                <table class="custom-table select-table" id="reportsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Reports</th>
+                                            <th>Type</th>
+                                            <th>Date & Time</th>
+                                            <th>Result</th>
+                                            <th>Status</th>
+                                            <th>View</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Populated dynamically via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- AI Diagnostic Confidence Engine (Right Column Top) -->
+                        <div class="glass-card confidence-engine-card">
+                            <div class="card-header">
+                                <h3 class="card-title">AI DIAGNOSTIC CONFIDENCE ENGINE <span class="info-icon">info</span></h3>
+                            </div>
+                            <div class="engine-progress-list">
+                                <div class="engine-row">
+                                    <div class="engine-row-header">
+                                        <div class="engine-name-block">
+                                            <span class="engine-lbl">Pneumonia</span>
+                                            <span class="engine-status-tag detected">Detected</span>
+                                        </div>
+                                        <span class="engine-percent error-text">92%</span>
+                                    </div>
+                                    <div class="engine-bar-wrap">
+                                        <div class="progress-bar-bg"><div class="progress-bar-fill error" style="width: 92%;"></div></div>
+                                        <button class="btn btn-xs">Explain</button>
+                                    </div>
+                                </div>
+                                <div class="engine-row">
+                                    <div class="engine-row-header">
+                                        <div class="engine-name-block">
+                                            <span class="engine-lbl">Pulmonary Edema</span>
+                                            <span class="engine-status-tag green-tag">Unlikely</span>
+                                        </div>
+                                        <span class="engine-percent warning-text">18%</span>
+                                    </div>
+                                    <div class="engine-bar-wrap">
+                                        <div class="progress-bar-bg"><div class="progress-bar-fill warning" style="width: 18%;"></div></div>
+                                        <button class="btn btn-xs">Explain</button>
+                                    </div>
+                                </div>
+                                <div class="engine-row">
+                                    <div class="engine-row-header">
+                                        <div class="engine-name-block">
+                                            <span class="engine-lbl">Pleural Effusion</span>
+                                            <span class="engine-status-tag yellow-tag">Possible</span>
+                                        </div>
+                                        <span class="engine-percent warning-text">64%</span>
+                                    </div>
+                                    <div class="engine-bar-wrap">
+                                        <div class="progress-bar-bg"><div class="progress-bar-fill warning" style="width: 64%;"></div></div>
+                                        <button class="btn btn-xs">Explain</button>
+                                    </div>
+                                </div>
+                                <div class="engine-row">
+                                    <div class="engine-row-header">
+                                        <div class="engine-name-block">
+                                            <span class="engine-lbl">Intracranial Hemorrhage</span>
+                                            <span class="engine-status-tag green-tag">Not Detected</span>
+                                        </div>
+                                        <span class="engine-percent success-text">94%</span>
+                                    </div>
+                                    <div class="engine-bar-wrap">
+                                        <div class="progress-bar-bg"><div class="progress-bar-fill success" style="width: 94%;"></div></div>
+                                        <button class="btn btn-xs">Explain</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="impression-banner">
+                                <span class="material-symbols-outlined shield-icon">shield_with_heart</span>
+                                <div class="impression-text">
+                                    <strong>OVERALL AI IMPRESSION</strong>
+                                    <span>Findings suggest improving condition. Continue monitoring.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI Findings (Bottom Left) -->
+                        <div class="glass-card report-findings-card">
+                            <div class="card-header">
+                                <h3 class="card-title">AI FINDINGS</h3>
+                            </div>
+                            <div class="findings-list">
+                                <div class="finding-alert-item error">
+                                    <span class="material-symbols-outlined finding-icon">warning</span>
+                                    <div class="finding-desc">
+                                        <span class="finding-title">No acute in-cranial fracture</span>
+                                        <span class="finding-conf">confidence: 95%</span>
+                                    </div>
+                                </div>
+                                <div class="finding-alert-item error">
+                                    <span class="material-symbols-outlined finding-icon">warning</span>
+                                    <div class="finding-desc">
+                                        <span class="finding-title">Mild age-related cortical atrophy</span>
+                                        <span class="finding-conf">confidence: 98%</span>
+                                    </div>
+                                </div>
+                                <div class="finding-alert-item warning">
+                                    <span class="material-symbols-outlined finding-icon">info</span>
+                                    <div class="finding-desc">
+                                        <span class="finding-title">No acute in-cranial fracture</span>
+                                        <span class="finding-conf">confidence: 97%</span>
+                                    </div>
+                                </div>
+                                <div class="finding-alert-item success">
+                                    <span class="material-symbols-outlined finding-icon">check_circle</span>
+                                    <div class="finding-desc">
+                                        <span class="finding-title">No acute in-cranial fracture</span>
+                                        <span class="finding-conf">confidence: 86%</span>
+                                    </div>
+                                </div>
+                                <div class="finding-alert-item success">
+                                    <span class="material-symbols-outlined finding-icon">check_circle</span>
+                                    <div class="finding-desc">
+                                        <span class="finding-title">No midline shift or mass effect</span>
+                                        <span class="finding-conf">confidence: 76%</span>
+                                    </div>
+                                </div>
+                                <div class="finding-alert-item info-blue">
+                                    <span class="material-symbols-outlined finding-icon">tv</span>
+                                    <div class="finding-desc">
+                                        <span class="finding-title">Overall Appearance Stable</span>
+                                        <span class="finding-conf">Compared to previous scans | confidence: 89%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-full" id="btnViewFullReport">View Full Reports</button>
+                        </div>
+
+                        <!-- Scan Comparison (Bottom Right) -->
+                        <div class="glass-card scan-comparison-card">
+                            <div class="card-header">
+                                <h3 class="card-title">SCAN COMPARISON <span class="info-icon">info</span></h3>
+                            </div>
+                            <div class="comparison-split-grid">
+                                
+                                <div class="scan-scroller-left">
+                                    <!-- Thumbnail list of scans -->
+                                    <div class="scan-thumb active" data-scan="ct_brain">
+                                        <div class="thumb-img brain-placeholder-1"></div>
+                                        <div class="thumb-info">
+                                            <span class="thumb-time">11:30 AM</span>
+                                            <span class="thumb-label">CT Brain</span>
+                                            <span class="thumb-status warning-text">Review</span>
+                                        </div>
+                                    </div>
+                                    <div class="scan-thumb" data-scan="xray_chest">
+                                        <div class="thumb-img chest-placeholder"></div>
+                                        <div class="thumb-info">
+                                            <span class="thumb-time">10:15 AM</span>
+                                            <span class="thumb-label">X-Ray Chest</span>
+                                            <span class="thumb-status success-text">Normal</span>
+                                        </div>
+                                    </div>
+                                    <div class="scan-thumb" data-scan="usg_abdomen">
+                                        <div class="thumb-img abdomen-placeholder"></div>
+                                        <div class="thumb-info">
+                                            <span class="thumb-time">03:20 PM</span>
+                                            <span class="thumb-label">USG Abdomen</span>
+                                            <span class="thumb-status warning-text">Review</span>
+                                        </div>
+                                    </div>
+                                    <div class="scan-thumb" data-scan="mri_brain">
+                                        <div class="thumb-img brain-placeholder-2"></div>
+                                        <div class="thumb-info">
+                                            <span class="thumb-time">01:45 PM</span>
+                                            <span class="thumb-label">MRI Brain</span>
+                                            <span class="thumb-status success-text">Normal</span>
+                                        </div>
+                                    </div>
+                                    <div class="scan-thumb" data-scan="echo">
+                                        <div class="thumb-img echo-placeholder"></div>
+                                        <div class="thumb-info">
+                                            <span class="thumb-time">04:05 PM</span>
+                                            <span class="thumb-label">ECHO</span>
+                                            <span class="thumb-status warning-text">Review</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="scan-interactive-comparison">
+                                    <div class="split-slider-wrapper" id="scanComparisonSlider">
+                                        
+                                        <!-- Previous Scan (Left Side Image) -->
+                                        <div class="split-side left-side">
+                                            <div class="scan-img-overlay-label">PREVIOUS SCAN<br><span>12 May 2026 ● 10:30 AM</span></div>
+                                            <div class="scan-canvas-view prev-canvas-image">
+                                                <canvas id="prevScanCanvas"></canvas>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Current Scan (Right Side Image, will mask width) -->
+                                        <div class="split-side right-side" id="currentScanClipContainer">
+                                            <div class="scan-img-overlay-label right">CURRENT SCAN<br><span>17 May 2026 ● 11:30 AM</span></div>
+                                            <div class="scan-canvas-view curr-canvas-image">
+                                                <canvas id="currScanCanvas"></canvas>
+                                            </div>
+                                        </div>
+
+                                        <!-- Handle -->
+                                        <div class="slider-handle" id="sliderHandle">
+                                            <span class="material-symbols-outlined">unfold_more</span>
+                                        </div>
+
+                                    </div>
+                                    
+                                    <div class="comparison-summary-bar">
+                                        <div class="summary-text-block">
+                                            <strong>AI COMPARISON SUMMARY</strong>
+                                            <span>Opacity in left temporal region has reduced. Overall improvement observed.</span>
+                                        </div>
+                                        <div class="improvement-gauge">
+                                            <span class="gauge-value highlight-green">32 %</span>
+                                            <span class="gauge-sub">Improvement</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- 5. PATIENT HISTORY PAGE -->
+                <section class="page-panel" id="page-history">
+                    <div class="history-grid-layout">
+                        
+                        <!-- Top Habits Cards -->
+                        <div class="habits-bar span-cols-4">
+                            <div class="glass-card habit-box">
+                                <span class="habit-lbl">Smoking</span>
+                                <span class="habit-value text-red">15 Years</span>
+                                <span class="habit-badge alert-bg">Current Smoker</span>
+                            </div>
+                            <div class="glass-card habit-box">
+                                <span class="habit-lbl">Alcohol</span>
+                                <span class="habit-value text-yellow">Occasional</span>
+                                <span class="habit-badge warning-bg">2-3 times / week</span>
+                            </div>
+                            <div class="glass-card habit-box">
+                                <span class="habit-lbl">BMI</span>
+                                <span class="habit-value text-yellow">29.1</span>
+                                <span class="habit-badge warning-bg">Overweight</span>
+                            </div>
+                            <div class="glass-card habit-box">
+                                <span class="habit-lbl">Exercise</span>
+                                <span class="habit-value text-green">Low</span>
+                                <span class="habit-badge success-bg">1-2 times/week</span>
+                            </div>
+                            <div class="glass-card habit-box">
+                                <span class="habit-lbl">Diet</span>
+                                <span class="habit-value text-red">Mixed</span>
+                                <span class="habit-badge alert-bg">High salt, low Fiber</span>
+                            </div>
+                        </div>
+
+                        <!-- Allergy History -->
+                        <div class="glass-card allergy-history-card">
+                            <div class="card-header">
+                                <h3 class="card-title">ALLERGY HISTORY</h3>
+                            </div>
+                            <div class="allergies-list-detailed">
+                                <div class="allergy-detail-row">
+                                    <span class="material-symbols-outlined allergy-icon high-risk">coronavirus</span>
+                                    <span class="allergy-name">Penicillin</span>
+                                    <span class="allergy-badge high">High</span>
+                                </div>
+                                <div class="allergy-detail-row">
+                                    <span class="material-symbols-outlined allergy-icon mod-risk">pest_control</span>
+                                    <span class="allergy-name">Sulfa Drugs</span>
+                                    <span class="allergy-badge moderate">Moderate</span>
+                                </div>
+                                <div class="allergy-detail-row">
+                                    <span class="material-symbols-outlined allergy-icon low-risk">bug_report</span>
+                                    <span class="allergy-name">Dust Mites</span>
+                                    <span class="allergy-badge mild">Mild</span>
+                                </div>
+                            </div>
+                            <div class="allergy-check-msg">
+                                <span class="material-symbols-outlined info-icon-blue">info</span>
+                                <span>Please check allergy status before administering any new medication.</span>
+                            </div>
+                        </div>
+
+                        <!-- Hospitalization History -->
+                        <div class="glass-card hospitalization-card">
+                            <div class="card-header">
+                                <h3 class="card-title">HOSPITALIZATION HISTORY</h3>
+                            </div>
+                            <div class="table-responsive scroll-table-sm">
+                                <table class="custom-table small-text">
+                                    <thead>
+                                        <tr>
+                                            <th>Admission Date</th>
+                                            <th>Reason</th>
+                                            <th>Duration</th>
+                                            <th>Outcome</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>17 March 2023</td>
+                                            <td>COVID Pneumonia</td>
+                                            <td>7 Days</td>
+                                            <td><span class="condition-badge success-bg">DISCHARGED</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>22 Feb 2024</td>
+                                            <td>Coronary Event</td>
+                                            <td>4 Days</td>
+                                            <td><span class="condition-badge green-tag">RECOVERED</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>10 sep 2024</td>
+                                            <td>Acute Bronchitis</td>
+                                            <td>3 Days</td>
+                                            <td><span class="condition-badge success-bg">DISCHARGED</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Vaccination History -->
+                        <div class="glass-card vaccination-card">
+                            <div class="card-header">
+                                <h3 class="card-title">VACCINATION HISTORY</h3>
+                            </div>
+                            <ul class="vaccine-checklist">
+                                <li class="vaccine-item checked">
+                                    <span class="material-symbols-outlined check-box-icon">check_circle</span>
+                                    <span class="vaccine-name">COVID 19 Booster</span>
+                                    <span class="vaccine-date">20 Oct 2024</span>
+                                </li>
+                                <li class="vaccine-item checked">
+                                    <span class="material-symbols-outlined check-box-icon">check_circle</span>
+                                    <span class="vaccine-name">Influenza Vaccine</span>
+                                    <span class="vaccine-date">15 Oct 2024</span>
+                                </li>
+                                <li class="vaccine-item checked">
+                                    <span class="material-symbols-outlined check-box-icon">check_circle</span>
+                                    <span class="vaccine-name">Pneumococcal Vaccine</span>
+                                    <span class="vaccine-date">05 Sep 2023</span>
+                                </li>
+                                <li class="vaccine-item checked">
+                                    <span class="material-symbols-outlined check-box-icon">check_circle</span>
+                                    <span class="vaccine-name">Tetanus (Tdap)</span>
+                                    <span class="vaccine-date">12 Aug 2022</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Family Tree History -->
+                        <div class="glass-card family-tree-card">
+                            <div class="card-header">
+                                <h3 class="card-title">FAMILY TREE HISTORY</h3>
+                            </div>
+                            <div class="tree-pedigree-view">
+                                <div class="tree-row row-grandparents">
+                                    <div class="tree-node deceased" title="Grandfather (Deceased) - Cardio-Disease">
+                                        <span class="node-relation">Grandfather</span>
+                                        <span class="node-meta">Cardio-Disease</span>
+                                    </div>
+                                    <div class="tree-node deceased" title="Grandmother (Deceased) - Diabetes">
+                                        <span class="node-relation">Grandmother</span>
+                                        <span class="node-meta">Diabetes</span>
+                                    </div>
+                                </div>
+                                <div class="tree-connectors line-g-p"></div>
+                                <div class="tree-row row-parents">
+                                    <div class="tree-node active-disease" title="Father (52 Yr Old) - Hypertension">
+                                        <span class="node-relation">Father (52)</span>
+                                        <span class="node-meta">Hypertension</span>
+                                    </div>
+                                    <div class="tree-node active-disease" title="Mother (50 Yr Old) - Diabetes">
+                                        <span class="node-relation">Mother (50)</span>
+                                        <span class="node-meta">Diabetes</span>
+                                    </div>
+                                    <div class="tree-node" title="Uncle (55 Yr Old) - Stroke">
+                                        <span class="node-relation">Uncle (55)</span>
+                                        <span class="node-meta">Stroke</span>
+                                    </div>
+                                </div>
+                                <div class="tree-connectors line-p-c"></div>
+                                <div class="tree-row row-children">
+                                    <div class="tree-node active-disease" title="Sister (25 Yr Old) - Diabetes">
+                                        <span class="node-relation">Sister (25)</span>
+                                        <span class="node-meta">Diabetes</span>
+                                    </div>
+                                    <div class="tree-node patient-node" title="Patient (23 Yr Old) - Hypertension">
+                                        <span class="material-symbols-outlined patient-node-icon">person</span>
+                                        <span class="node-relation">Patient (23)</span>
+                                        <span class="node-meta text-yellow">Hypertension</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Surgical and Procedure History -->
+                        <div class="glass-card surgical-card span-cols-2">
+                            <div class="card-header">
+                                <h3 class="card-title">SURGICAL AND PROCEDURE HISTORY</h3>
+                            </div>
+                            <div class="table-responsive scroll-table-sm">
+                                <table class="custom-table small-text">
+                                    <thead>
+                                        <tr>
+                                            <th>Procedure</th>
+                                            <th>Date</th>
+                                            <th>Reason</th>
+                                            <th>Outcome</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Appendectomy</td>
+                                            <td>15 Jun 2020</td>
+                                            <td>Acute Appendicitis</td>
+                                            <td><span class="condition-badge success-bg">Recovered</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Coronary Angioplasty</td>
+                                            <td>22 Feb 2024</td>
+                                            <td>Coronary Artery Disease</td>
+                                            <td><span class="condition-badge success-bg">Successful</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Wisdom Tooth Extraction</td>
+                                            <td>10 Aug 2012</td>
+                                            <td>Dental Caries</td>
+                                            <td><span class="condition-badge success-bg">Recovered</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Colonoscopy</td>
+                                            <td>05 Jul 2019</td>
+                                            <td>Routine Screening</td>
+                                            <td><span class="condition-badge green-tag">Normal</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Genetic Risk Profile -->
+                        <div class="glass-card genetic-risk-card span-cols-2">
+                            <div class="card-header">
+                                <h3 class="card-title">GENETIC RISK PROFILE</h3>
+                            </div>
+                            <div class="genetic-profile-list">
+                                <div class="genetic-row">
+                                    <span class="genetic-label">CARDIO VASCULAR DISEASE</span>
+                                    <div class="risk-dots">
+                                        <span class="dot red-dot"></span><span class="dot red-dot"></span><span class="dot red-dot"></span>
+                                        <span class="risk-level text-red">High</span>
+                                    </div>
+                                </div>
+                                <div class="genetic-row">
+                                    <span class="genetic-label">DIABETES</span>
+                                    <div class="risk-dots">
+                                        <span class="dot red-dot"></span><span class="dot red-dot"></span><span class="dot red-dot"></span>
+                                        <span class="risk-level text-red">High</span>
+                                    </div>
+                                </div>
+                                <div class="genetic-row">
+                                    <span class="genetic-label">STROKE</span>
+                                    <div class="risk-dots">
+                                        <span class="dot yellow-dot"></span><span class="dot yellow-dot"></span><span class="dot gray-dot"></span>
+                                        <span class="risk-level text-yellow">Moderate</span>
+                                    </div>
+                                </div>
+                                <div class="genetic-row">
+                                    <span class="genetic-label">CANCER</span>
+                                    <div class="risk-dots">
+                                        <span class="dot green-dot"></span><span class="dot gray-dot"></span><span class="dot gray-dot"></span>
+                                        <span class="risk-level text-green">Low</span>
+                                    </div>
+                                </div>
+                                <div class="genetic-row">
+                                    <span class="genetic-label">CHRONIC LUNG DISEASE</span>
+                                    <div class="risk-dots">
+                                        <span class="dot yellow-dot"></span><span class="dot yellow-dot"></span><span class="dot gray-dot"></span>
+                                        <span class="risk-level text-yellow">Moderate</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Medical Timeline (Bottom Wide) -->
+                        <div class="glass-card span-cols-4 medical-timeline-card">
+                            <div class="card-header">
+                                <h3 class="card-title">MEDICAL TIMELINE</h3>
+                            </div>
+                            <div class="timeline-slider-wrapper">
+                                <div class="timeline-track">
+                                    <div class="timeline-node-item active-node" style="left: 0%;">
+                                        <span class="node-year">2016</span>
+                                        <div class="node-circle green-bg"><span class="material-symbols-outlined node-icon">assignment</span></div>
+                                        <span class="node-title">Diabetes Diagnosed</span>
+                                    </div>
+                                    <div class="timeline-node-item active-node" style="left: 20%;">
+                                        <span class="node-year">2018</span>
+                                        <div class="node-circle yellow-bg"><span class="material-symbols-outlined node-icon">favorite</span></div>
+                                        <span class="node-title">Hypertension Diagnosed</span>
+                                    </div>
+                                    <div class="timeline-node-item active-node" style="left: 40%;">
+                                        <span class="node-year">2020</span>
+                                        <div class="node-circle purple-bg"><span class="material-symbols-outlined node-icon">vaccines</span></div>
+                                        <span class="node-title">Appendectomy</span>
+                                    </div>
+                                    <div class="timeline-node-item active-node" style="left: 60%;">
+                                        <span class="node-year">2023</span>
+                                        <div class="node-circle blue-bg"><span class="material-symbols-outlined node-icon">medical_services</span></div>
+                                        <span class="node-title">COVID Pneumonia Hospitalized</span>
+                                    </div>
+                                    <div class="timeline-node-item active-node" style="left: 80%;">
+                                        <span class="node-year">2024</span>
+                                        <div class="node-circle red-bg"><span class="material-symbols-outlined node-icon">heart_broken</span></div>
+                                        <span class="node-title">Coronary Angioplasty</span>
+                                    </div>
+                                    <div class="timeline-node-item active-node" style="left: 100%;">
+                                        <span class="node-year">2025</span>
+                                        <div class="node-circle green-bg"><span class="material-symbols-outlined node-icon">emergency</span></div>
+                                        <span class="node-title">ICU Admission (Severe Pneumonia)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- 6. SETTINGS PAGE -->
+                <section class="page-panel" id="page-settings">
+                    <div class="settings-grid-layout">
+                        
+                        <!-- Top Theme Controls / End Case -->
+                        <div class="settings-actions-bar span-cols-4">
+                            <div class="settings-title-section">
+                                <h2>SETTINGS</h2>
+                            </div>
+                            <div class="settings-control-buttons">
+                                <div class="theme-toggle-group">
+                                    <button class="btn theme-btn" id="themeBtnLight">
+                                        <span class="material-symbols-outlined">light_mode</span>
+                                        <span>LIGHT</span>
+                                    </button>
+                                    <button class="btn theme-btn active" id="themeBtnDark">
+                                        <span class="material-symbols-outlined">dark_mode</span>
+                                        <span>DARK</span>
+                                    </button>
+                                </div>
+                                <button class="btn btn-danger-action" id="btnEndCase">
+                                    <span class="material-symbols-outlined">cancel</span>
+                                    <span>END CASE</span>
+                                </button>
+                                <button class="btn btn-secondary-action" id="btnSettingsLogout">
+                                    <span class="material-symbols-outlined">logout</span>
+                                    <span>LOG OUT</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Data Management (Left Top) -->
+                        <div class="glass-card data-mgmt-card span-cols-2">
+                            <div class="card-header">
+                                <h3 class="card-title"><span class="material-symbols-outlined card-header-icon">database</span>DATA MANAGEMENT</h3>
+                            </div>
+                            <div class="settings-group-fields">
+                                <div class="storage-indicator-block">
+                                    <span class="mgmt-sub-title">Storage Used</span>
+                                    <div class="storage-values-text">
+                                        <strong>2.4 TB</strong> / 10 TB
+                                    </div>
+                                    <div class="progress-bar-bg"><div class="progress-bar-fill info" style="width: 24%;"></div></div>
+                                </div>
+                                <div class="setting-row clickable-setting" id="fieldAutoArchive">
+                                    <span class="setting-lbl">Auto-archive</span>
+                                    <span class="setting-val-tag" id="valAutoArchive">90 days</span>
+                                </div>
+                                <div class="setting-row clickable-setting" id="fieldExportFormat">
+                                    <span class="setting-lbl">Export Format</span>
+                                    <span class="setting-val-tag" id="valExportFormat">HL7 FHIR</span>
+                                </div>
+                                <div class="setting-row clickable-setting" id="fieldEncryption">
+                                    <span class="setting-lbl">Encryption</span>
+                                    <span class="setting-val-tag" id="valEncryption">AES-256</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- System Status (Right Top) -->
+                        <div class="glass-card system-status-card span-cols-2">
+                            <div class="card-header">
+                                <h3 class="card-title">SYSTEM STATUS</h3>
+                            </div>
+                            <div class="settings-group-fields">
+                                <div class="setting-row">
+                                    <span class="setting-lbl">System Status</span>
+                                    <span class="setting-val-tag success-text" id="statusSystem">Online</span>
+                                </div>
+                                <div class="setting-row">
+                                    <span class="setting-lbl">Database</span>
+                                    <span class="setting-val-tag success-text" id="statusDatabase">Connected</span>
+                                </div>
+                                <div class="setting-row">
+                                    <span class="setting-lbl">Backup Status</span>
+                                    <span class="setting-val-tag success-text" id="statusBackup">Up to date</span>
+                                </div>
+                                <div class="setting-row">
+                                    <span class="setting-lbl">Last Backup</span>
+                                    <span class="setting-val-tag font-normal" id="statusLastBackup">Today, 02:00 AM</span>
+                                </div>
+                                <div class="setting-row">
+                                    <span class="setting-lbl">System Uptime</span>
+                                    <span class="setting-val-tag font-normal" id="statusUptime">15d 8h 24m</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- System Language and Units (Middle Wide) -->
+                        <div class="glass-card span-cols-4 language-units-card">
+                            <div class="card-header">
+                                <h3 class="card-title">SYSTEM LANGUAGE AND UNITS</h3>
+                            </div>
+                            <div class="dropdowns-row">
+                                <div class="dropdown-control">
+                                    <label class="select-label">Language</label>
+                                    <select class="custom-select" id="settingsLanguage">
+                                        <option value="en-US">English (US)</option>
+                                        <option value="en-GB">English (UK)</option>
+                                        <option value="hi-IN">Hindi</option>
+                                        <option value="mr-IN">Marathi</option>
+                                        <option value="gu-IN">Gujarati</option>
+                                        <option value="ta-IN">Tamil</option>
+                                        <option value="te-IN">Telugu</option>
+                                        <option value="kn-IN">Kannada</option>
+                                        <option value="ml-IN">Malayalam</option>
+                                        <option value="bn-IN">Bengali</option>
+                                        <option value="pa-IN">Punjabi</option>
+                                        <option value="ur-PK">Urdu</option>
+                                    </select>
+                                </div>
+                                <div class="dropdown-control">
+                                    <label class="select-label">Temp unit</label>
+                                    <select class="custom-select" id="settingsTempUnit">
+                                        <option value="C">°C (Celsius)</option>
+                                        <option value="F">°F (Fahrenheit)</option>
+                                    </select>
+                                </div>
+                                <div class="dropdown-control">
+                                    <label class="select-label">Weight unit</label>
+                                    <select class="custom-select" id="settingsWeightUnit">
+                                        <option value="kg">kg</option>
+                                        <option value="lbs">lbs</option>
+                                    </select>
+                                </div>
+                                <div class="dropdown-control">
+                                    <label class="select-label">Height unit</label>
+                                    <select class="custom-select" id="settingsHeightUnit">
+                                        <option value="cm">cm</option>
+                                        <option value="in">inches</option>
+                                    </select>
+                                </div>
+                                <div class="dropdown-control">
+                                    <label class="select-label">Glucose unit</label>
+                                    <select class="custom-select" id="settingsGlucoseUnit">
+                                        <option value="mmol/L">mmol/L</option>
+                                        <option value="mg/dL">mg/dL</option>
+                                    </select>
+                                </div>
+                                <div class="dropdown-control">
+                                    <label class="select-label">Date format</label>
+                                    <select class="custom-select" id="settingsDateFormat">
+                                        <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI Settings (Bottom Left) -->
+                        <div class="glass-card ai-settings-card">
+                            <div class="card-header">
+                                <h3 class="card-title">AI SETTINGS</h3>
+                            </div>
+                            <div class="toggles-list">
+                                <div class="toggle-row">
+                                    <div class="toggle-desc">
+                                        <span class="toggle-title">PREDICTIVE ALERTS</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" checked id="togglePredictiveAlerts">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="toggle-row">
+                                    <div class="toggle-desc">
+                                        <span class="toggle-title">ROOT CAUSE ANALYSIS</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="toggleRootCauseAnalysis">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="toggle-row">
+                                    <div class="toggle-desc">
+                                        <span class="toggle-title">SMART RECOMMENDATION</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" checked id="toggleSmartRecommendation">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="toggle-row">
+                                    <div class="toggle-desc">
+                                        <span class="toggle-title">EXPLAINABILITY MODE</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="toggleExplainabilityMode">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Critical Threshold Settings (Bottom Middle) -->
+                        <div class="glass-card critical-thresholds-card span-cols-2">
+                            <div class="card-header">
+                                <h3 class="card-title"><span class="material-symbols-outlined card-header-icon">report_problem</span>CRITICAL THRESHOLD SETTINGS</h3>
+                            </div>
+                            <div class="inputs-grid">
+                                <div class="input-row">
+                                    <label class="input-lbl">SpO2 Critical Low</label>
+                                    <div class="input-unit-wrap">
+                                        <input type="number" class="number-input" id="thresholdSpO2" value="85">
+                                        <span class="unit-label">%</span>
+                                    </div>
+                                </div>
+                                <div class="input-row">
+                                    <label class="input-lbl">Heart Rate High</label>
+                                    <div class="input-unit-wrap">
+                                        <input type="number" class="number-input" id="thresholdHR" value="150">
+                                        <span class="unit-label">bpm</span>
+                                    </div>
+                                </div>
+                                <div class="input-row">
+                                    <label class="input-lbl">Systolic BP High</label>
+                                    <div class="input-unit-wrap">
+                                        <input type="number" class="number-input" id="thresholdSysBP" value="180">
+                                        <span class="unit-label">mmHg</span>
+                                    </div>
+                                </div>
+                                <div class="input-row">
+                                    <label class="input-lbl">Respiratory Rate High</label>
+                                    <div class="input-unit-wrap">
+                                        <input type="number" class="number-input" id="thresholdRR" value="30">
+                                        <span class="unit-label">/min</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Security (Bottom Right) -->
+                        <div class="glass-card security-settings-card">
+                            <div class="card-header">
+                                <h3 class="card-title"><span class="material-symbols-outlined card-header-icon">security</span>SECURITY</h3>
+                            </div>
+                            <div class="settings-group-fields sm-padding">
+                                <div class="setting-row">
+                                    <span class="setting-lbl">2FA</span>
+                                    <span class="setting-val-tag">Enabled</span>
+                                </div>
+                                <div class="setting-row">
+                                    <span class="setting-lbl">Session Timeout</span>
+                                    <span class="setting-val-tag font-normal">30 min</span>
+                                </div>
+                                <div class="setting-row">
+                                    <span class="setting-lbl">Designer</span>
+                                    <span class="setting-val-tag font-normal">Deepshikha Dey</span>
+                                </div>
+                                <div class="setting-row">
+                                    <span class="setting-lbl">HIPAA Compliance</span>
+                                    <span class="setting-val-tag success-text">Verified</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- 7. SETUP GUIDE PAGE -->
+                <section class="page-panel" id="page-setup">
+                    <div class="setup-title-section">
+                        <h2>SYSTEM INSTALLATION & SETUP GUIDE</h2>
+                    </div>
+                    <div class="setup-grid-layout">
+                        <!-- Card 1: Edge Telemetry Backend -->
+                        <div class="glass-card setup-card">
+                            <div class="card-header">
+                                <h3 class="card-title">1. Edge Telemetry Gateway</h3>
+                            </div>
+                            <div class="setup-steps-list">
+                                <div class="setup-step-item">
+                                    <div class="setup-step-header">
+                                        <span class="setup-step-num">1</span>
+                                        <span class="setup-step-title">Initialize Python Environment</span>
+                                    </div>
+                                    <span class="setup-step-desc">Create a dedicated virtual environment in the backend directory and activate it:</span>
+                                    <div class="setup-code-block">cd backend/
+python -m venv venv
+# Windows:
+.\venv\Scripts\activate
+# Linux/macOS:
+source venv/bin/activate</div>
+                                </div>
+                                <div class="setup-step-item">
+                                    <div class="setup-step-header">
+                                        <span class="setup-step-num">2</span>
+                                        <span class="setup-step-title">Install Core Gateway Dependencies</span>
+                                    </div>
+                                    <span class="setup-step-desc">Install dependencies required for telemetry streaming and static serving:</span>
+                                    <div class="setup-code-block">pip install -r requirements.txt</div>
+                                </div>
+                                <div class="setup-step-item">
+                                    <div class="setup-step-header">
+                                        <span class="setup-step-num">3</span>
+                                        <span class="setup-step-title">Launch Kiosk Edge Server</span>
+                                    </div>
+                                    <span class="setup-step-desc">Run the FastAPI uvicorn server locally. By default, this hosts the web dashboard on port 8000:</span>
+                                    <div class="setup-code-block">uvicorn app.main:app --reload --port 8000</div>
+                                </div>
+                                <div class="setup-step-item">
+                                    <div class="setup-step-header">
+                                        <span class="setup-step-num">⚡</span>
+                                        <span class="setup-step-title">One-Click Simulation Runner</span>
+                                    </div>
+                                    <span class="setup-step-desc">Alternatively, auto-configure virtualenv and launch the browser using the root script:</span>
+                                    <div class="setup-code-block"># Windows:
+.\scripts\run_simulation.ps1
+# Linux/macOS:
+./scripts/run_simulation.sh</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Central HELIOS OS Production Stack -->
+                        <div class="glass-card setup-card">
+                            <div class="card-header">
+                                <h3 class="card-title">2. Central Production Stack</h3>
+                            </div>
+                            <div class="setup-steps-list">
+                                <div class="setup-step-item">
+                                    <div class="setup-step-header">
+                                        <span class="setup-step-num">1</span>
+                                        <span class="setup-step-title">Orchestrate Infrastructure via Docker</span>
+                                    </div>
+                                    <span class="setup-step-desc">Launch the database (PostgreSQL), memory store (Redis), object storage (MinIO), and tracing pipelines:</span>
+                                    <div class="setup-code-block">docker-compose -f deployment/docker/docker-compose.yaml up -d</div>
+                                </div>
+                                <div class="setup-step-item">
+                                    <div class="setup-step-header">
+                                        <span class="setup-step-num">2</span>
+                                        <span class="setup-step-title">Run Central Dashboard APIs</span>
+                                    </div>
+                                    <span class="setup-step-desc">Start the high-throughput clinician dashboard service from the backend package:</span>
+                                    <div class="setup-code-block">cd backend/
+uvicorn dashboard.api.main:app --reload --port 8000</div>
+                                </div>
+                                <div class="setup-step-item">
+                                    <div class="setup-step-header">
+                                        <span class="setup-step-num">3</span>
+                                        <span class="setup-step-title">Start the AI Inference Engine</span>
+                                        <span class="vital-range warning-text" style="display:inline-block; margin-left: 10px;">Requires AI deps</span>
+                                    </div>
+                                    <span class="setup-step-desc">Start the real-time AI critical alert engine (onnxruntime, sklearn) on port 8001:</span>
+                                    <div class="setup-code-block">cd backend/
+uvicorn ai.main:app --port 8001</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: SevraOS Live ISO Compilation -->
+                        <div class="glass-card setup-card">
+                            <div class="card-header">
+                                <h3 class="card-title">3. SevraOS live ISO Compilation</h3>
+                            </div>
+                            <div class="setup-steps-list">
+                                <div class="setup-step-item">
+                                    <div class="setup-step-header">
+                                        <span class="setup-step-num">1</span>
+                                        <span class="setup-step-title">Setup Build Workspace (Arch Linux)</span>
+                                    </div>
+                                    <span class="setup-step-desc">Install the standard `archiso` compilation utilities on a host Arch Linux system:</span>
+                                    <div class="setup-code-block">sudo pacman -S archiso</div>
+                                </div>
+                                <div class="setup-step-item">
+                                    <div class="setup-step-header">
+                                        <span class="setup-step-num">2</span>
+                                        <span class="setup-step-title">Compile the Branded ISO</span>
+                                    </div>
+                                    <span class="setup-step-desc">Compile the operating system using root permissions. The target ISO generates in the `out/` folder:</span>
+                                    <div class="setup-code-block">cd sevraos/
+sudo mkarchiso -v -w ./work -o ./out ./</div>
+                                </div>
+                                <div class="setup-step-item">
+                                    <div class="setup-step-header">
+                                        <span class="setup-step-num">3</span>
+                                        <span class="setup-step-title">Simulate Bedside Gateway</span>
+                                    </div>
+                                    <span class="setup-step-desc">To test the complete telemetry ingestion flow, run the simulator script:</span>
+                                    <div class="setup-code-block">python simulations/simulate.py</div>
+                                </div>
+                                <div class="setup-step-item">
+                                    <div class="setup-step-header">
+                                        <span class="setup-step-num">4</span>
+                                        <span class="setup-step-title">Run Virtually in QEMU VM (Optional)</span>
+                                    </div>
+                                    <span class="setup-step-desc">To test and run the compiled live ISO virtually before deploying to hardware, run:</span>
+                                    <div class="setup-code-block"># Windows:
+.\scripts\run_vm_qemu.ps1
+# Linux/macOS:
+./scripts/run_vm_qemu.sh</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+        </main>
+        
+    </div>
+
+    <!-- MODAL DIALOGS -->
+    <div class="modal-overlay" id="patientCaseModal">
+        <div class="modal-content glass-card width-sm">
+            <h4 class="modal-header-title">PATIENT CASE MANAGEMENT</h4>
+            <p class="modal-body-text">Confirm Before ending case</p>
+            <div class="modal-actions">
+                <button class="btn btn-outline" id="btnCancelEndCase">Cancel</button>
+                <button class="btn btn-danger" id="btnConfirmEndCase">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="lockScreenModal" style="z-index: 10000; background: rgba(5, 7, 10, 0.65); backdrop-filter: blur(10px);">
+        <div class="modal-content glass-card width-sm" style="text-align: center; border: 1px solid var(--color-bp); box-shadow: 0 0 20px rgba(255, 23, 68, 0.2);">
+            <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--color-bp); margin-bottom: 12px; animation: heartbeat 2s infinite; display: inline-block;">lock</span>
+            <h4 class="modal-header-title" style="margin-bottom: 8px;">SYSTEM LOCKED</h4>
+            <p class="modal-body-text" style="font-size: 0.82rem; margin-bottom: 20px;">Enter 4-digit PIN to resume clinical session</p>
+            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                <input type="password" id="lockPinInput" maxlength="4" placeholder="••••" style="width: 120px; letter-spacing: 6px; font-size: 1.5rem; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; padding: 6px;" autocomplete="new-password">
+            </div>
+            <div id="lockErrorMsg" style="color: var(--color-bp); font-size: 0.75rem; margin-bottom: 10px; min-height: 18px; font-weight: 700;"></div>
+            <div class="modal-actions" style="justify-content: center;">
+                <button class="btn btn-danger" id="btnUnlockSystem" style="width: 100%; height: 38px; font-weight: 800; border-radius: 8px; cursor: pointer;">UNLOCK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>

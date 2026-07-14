@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+echo "=== SevraOS System Monitor ==="
+echo "Host: $(hostname)"
+echo "Kernel: $(uname -r)"
+echo "Memory usage:"
+free -h
+echo "CPU Load:"
+uptime

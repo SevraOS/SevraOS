@@ -1,0 +1,225 @@
+base
+linux
+linux-firmware
+
+mkinitcpio
+mkinitcpio-archiso
+
+arch-install-scripts
+
+amd-ucode
+intel-ucode
+
+cryptsetup
+lvm2
+
+btrfs-progs
+dosfstools
+e2fsprogs
+exfatprogs
+f2fs-tools
+ntfs-3g
+xfsprogs
+
+efibootmgr
+grub
+
+parted
+gptfdisk
+
+iwd
+wpa_supplicant
+dhcpcd
+
+openssh
+
+sudo
+
+nano
+vim
+less
+
+man-db
+man-pages
+
+reflector
+
+usbutils
+pciutils
+
+xdg-utils
+
+# Core System
+base                         # Essential Arch Linux base system
+linux-rt                     # Linux kernel
+linux-firmware               # Hardware firmware support
+amd-ucode                    # AMD CPU microcode updates
+intel-ucode                  # Intel CPU microcode updates
+mkinitcpio                   # Generates initramfs during boot
+mkinitcpio-archiso           # Required for ArchISO live environment
+arch-install-scripts         # Arch installation utilities
+sudo                         # Administrative privilege management
+
+# Boot & Installation
+calamares                    # Graphical installer
+efibootmgr                   # EFI boot entry management
+grub                         # Bootloader
+
+# Desktop Environment (KDE Plasma)
+plasma-desktop               # KDE Plasma desktop
+sddm                         # Display/login manager
+konsole                      # KDE terminal emulator
+dolphin                      # KDE file manager
+discover                     # KDE software center
+
+# Networking
+networkmanager               # Network management service
+network-manager-applet       # GUI network controls
+iwd                          # Modern Wi-Fi backend
+openssh                      # Remote administration
+curl                         # Data transfer utility
+wget                         # File download utility
+reflector                    # Arch mirror optimization
+
+# Audio
+pipewire                     # Modern audio server
+pipewire-pulse               # PulseAudio compatibility
+wireplumber                  # PipeWire session manager
+alsa-utils                   # Audio utilities
+sof-firmware                 # Modern Intel audio firmware
+
+# Filesystem Support
+btrfs-progs                  # Btrfs filesystem support
+e2fsprogs                    # Ext2/3/4 filesystem tools
+dosfstools                   # FAT filesystem tools
+exfatprogs                   # ExFAT filesystem support
+f2fs-tools                   # F2FS filesystem support
+ntfs-3g                      # NTFS read/write support
+xfsprogs                     # XFS filesystem support
+parted                       # Disk partition management
+gptfdisk                     # GPT partitioning tools
+cryptsetup                   # Disk encryption support
+lvm2                         # Logical Volume Management
+
+# Storage & Hardware
+usbutils                     # USB device information
+pciutils                     # PCI device information
+udisks2                      # Automatic storage mounting
+gvfs                         # Access network and removable storage
+smartmontools                # Disk health monitoring
+nvme-cli                     # NVMe SSD diagnostics
+lm_sensors                   # Temperature and hardware monitoring
+
+# Printing & Scanning
+cups                         # Printing system
+cups-pdf                     # Print to PDF
+system-config-printer        # Printer configuration GUI
+sane                         # Scanner backend
+simple-scan                  # Document scanning application
+
+# Office & Productivity
+firefox                      # Web browser
+libreoffice-fresh            # Office suite
+okular                       # PDF viewer
+
+# Development & Maintenance
+git                          # Version control
+python                       # Scripting language
+python-pip                   # Python package manager
+bash-completion              # Command auto-completion
+
+# Backup & Recovery
+timeshift                    # System snapshots and rollback
+rsync                        # Backup and synchronization
+
+# Monitoring & Diagnostics
+htop                         # Process monitor
+btop                         # System resource monitor
+nmap                         # Network diagnostics
+tcpdump                      # Packet capture and analysis
+
+# Security
+ufw                          # Firewall management
+fail2ban                     # Intrusion prevention
+chrony                       # Time synchronization
+
+# Bluetooth
+bluez                        # Bluetooth stack
+bluez-utils                  # Bluetooth management tools
+
+# Archive Support
+zip                          # ZIP archive creation
+unzip                        # ZIP archive extraction
+p7zip                        # 7z archive support
+
+# Medical Device Integration
+socat                        # Serial/network bridging
+minicom                      # Serial device communication
+libusb                       # USB communication library
+python-pyserial              # Python serial communication
+python-pymodbus              # Modbus protocol support
+python-hl7                   # HL7 healthcare messaging
+python-fastapi              # Healthcare API development
+python-websockets            # Real-time telemetry streaming
+
+# Databases
+sqlite                       # Lightweight embedded database
+postgresql                   # Enterprise healthcare database
+
+# Containers & Deployment
+docker                       # Container platform
+docker-compose               # Multi-container orchestration
+
+# Runtime Dependencies
+openjdk17-openjdk            # Java development/runtime environment
+jre-openjdk                  # Java runtime environment
+nodejs                       # JavaScript runtime
+npm                          # Node package manager
+
+# IoT & Telemetry
+mosquitto                    # MQTT broker
+mosquitto-clients            # MQTT testing utilities
+
+# Fonts
+noto-fonts                   # Unicode font support
+noto-fonts-cjk               # Chinese/Japanese/Korean fonts
+ttf-dejavu                   # General-purpose fonts
+
+# Desktop Integration
+xdg-utils                    # Desktop integration tools
+
+# Editors
+nano                         # Simple text editor
+vim                          # Advanced text editor
+less                         # File viewing utility
+
+#For SevraOS v1
+base
+linux-rt
+linux-firmware
+amd-ucode
+intel-ucode
+mkinitcpio
+mkinitcpio-archiso
+arch-install-scripts
+calamares
+grub
+efibootmgr
+networkmanager
+firefox
+libreoffice-fresh
+okular
+cups
+simple-scan
+openssh
+git
+python
+chrony
+timeshift
+pipewire
+wireplumber
+btrfs-progs
+e2fsprogs
+dosfstools
+ntfs-3g
+sudo

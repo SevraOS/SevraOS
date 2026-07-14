@@ -1,0 +1,22 @@
+# HELIOS OS + SEVRA AI
+# Section 16 & 22: Prometheus Monitoring
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'helios-dashboard-api'
+    static_configs:
+      - targets: ['dashboard-api:8000']
+    metrics_path: '/metrics' # Assumes prometheus_client exposes /metrics
+
+  - job_name: 'helios-ai-service'
+    static_configs:
+      - targets: ['ai-service:8001']
+    
+  - job_name: 'helios-integration-service'
+    static_configs:
+      - targets: ['integration-service:8002']
+
+# AlertManager rules would be configured here to trigger SMS/Pagers 
+# if helios_ai_prediction_latency_seconds > 2.0s
